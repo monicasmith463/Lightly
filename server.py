@@ -2,7 +2,7 @@
 
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, Light
@@ -21,8 +21,19 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
+    #
+    # lights = Light.query.all()
 
-    return render_template("mapBoise.html")
+    return render_template("example.html")
+
+@app.route('/coordinate-data')
+def get_coordinates():
+    """Route to get coordinates from database and jsonify."""
+
+
+    coordinates = db.session.query(Light.latitude, Light.longitude).all()
+
+    return jsonify(coordinates)
 
 
 if __name__ == "__main__":
