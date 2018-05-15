@@ -24,7 +24,7 @@ def index():
     #
     # lights = Light.query.all()
 
-    return render_template("example.html")
+    return render_template("mapBoise.html")
 
 @app.route('/coordinate-data')
 def get_coordinates():
@@ -32,6 +32,7 @@ def get_coordinates():
 
 
     coordinates = db.session.query(Light.latitude, Light.longitude).all()
+    print coordinates[-1]
 
     return jsonify(coordinates)
 
