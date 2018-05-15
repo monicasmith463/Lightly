@@ -1,10 +1,10 @@
 function initMap() {
-  var directionsService = new google.maps.DirectionsService;
-  var directionsDisplay = new google.maps.DirectionsRenderer;
+
   var coords;
   var distance = 0.02; // in km
-  var routeBoxer = new RouteBoxer();
 
+  var directionsService = new google.maps.DirectionsService;
+  var directionsDisplay = new google.maps.DirectionsRenderer;
 
 
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -47,9 +47,14 @@ function initMap() {
               routeIndex: i
             });
 
-            polyline = response.routes[i].overview_polyline; //encoded polyline
+            // polyline = google.maps.geometry.encoding.decodePath(response.routes[i].overview_polyline);
+            polyline = new google.maps.Polyline({
+              path: response.routes[i].overview_polyline
+            });
+            //encoded polyline
 
-            findNearbyLights(polyline);
+            polyline.setMap(map);
+            findNearbyLights(polyline, coords=coords);
           }
 
         } else {
@@ -98,25 +103,25 @@ function mapCoords(coords) {
     (coord[0] > 43.61295367682718) && (coord[1] > -116.19129651919633)
 
   ))
-  boundedCoords.forEach( coord => {
-    var marker = new google.maps.Marker({
-      position: {lat: coord[0], lng: coord[1] },
-      map: map,
-      title: 'streetlight'
-    });
+  // boundedCoords.forEach( coord => {
+  //   var marker = new google.maps.Marker({
+  //     position: {lat: coord[0], lng: coord[1] },
+  //     map: map,
+  //     title: 'streetlight'
+  //   });
 
-    var lightPool = new google.maps.Circle({
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FF0000',
-      fillOpacity: 0.35,
-      map: map,
-      center: marker.position,
-      radius: 10
-    });
+    // var lightPool = new google.maps.Circle({
+    //   strokeColor: '#FF0000',
+    //   strokeOpacity: 0.8,
+    //   strokeWeight: 2,
+    //   fillColor: '#FF0000',
+    //   fillOpacity: 0.35,
+    //   map: map,
+    //   center: marker.position,
+    //   radius: 10
+    // });
 
-  })
+
 
   // for(var i=0; i<1000; i++) {
   //
@@ -140,36 +145,54 @@ function mapCoords(coords) {
      //   radius: 20
      // });
   // };
-}
+  calculateAndDisplayRoute(directionsService, directionsDisplay);
+};
 
-function findNearbyLights(polyline) {
+
+function findNearbyLights(polyline, coords=coords) {
+  console.log("polyline: ", polyline);
   coords.forEach(coord => {
+
     var marker = new google.maps.Marker({
-      position: {lat: coords[i][0], lng: coords[i][1] },
+      position: { lat: coord[0], lng: coord[1] },
       map: map,
       title: 'streetlight'
     });
 
-
+    var lightPosition = new google.maps.LatLng(coord[0], coord[1]);
+    console.log("coordinates: ", coord[0], coord[1] );
+    console.log("light position: ", lightPosition);
      // Add the circle for this city to the map.
-     if( google.maps.geometry.poly.isLocationOnEdge(marker.position, polyline, 10e-1) ) {
-       var lightPool = new google.maps.Circle({
-         strokeColor: '#FF0000',
-         strokeOpacity: 0.8,
-         strokeWeight: 2,
-         fillColor: '#FF0000',
-         fillOpacity: 0.35,
-         map: map,
-         center: marker.position,
-         radius: 20
-       });
+    var cascadiaFault = new google.maps.Polyline({
+    path: [
+      new google.maps.LatLng(49.95, -128.1),
+      new google.maps.LatLng(46.26, -126.3),
+      new google.maps.LatLng(40.3, -125.4)
+    ]
+    });
+
+    let test = google.maps.geometry.poly.containsLocation(lightPosition, polyline);
+    console.log(test);
+
+     if( test ) {
+       console.log("I'm Working!");
+       // var lightPool = new google.maps.Circle({
+       //   strokeColor: '#FF0000',
+       //   strokeOpacity: 0.8,
+       //   strokeWeight: 2,
+       //   fillColor: '#FF0000',
+       //   fillOpacity: 0.35,
+       //   map: map,
+       //   center: marker.position,
+       //   radius: 20
+       // });
      }
   });
 
 }
 
-  getData();
-  calculateAndDisplayRoute(directionsService, directionsDisplay);
+getData();
+
 
 
 
