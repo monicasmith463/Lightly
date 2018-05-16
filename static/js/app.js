@@ -33,10 +33,11 @@ function initMap() {
           // Box the overview path of the first route
           var path = response.routes[0].overview_path;
           var boxes = routeBoxer.box(path, distance);
+          console.log("routeboxer boxes: "+  boxes);
           drawBoxes(boxes);
           console.log("boxes: ", typeof boxes[0].b.b);
-          boxes.forEach( box => {
-            var mapBox = new google.maps.Rectangle({
+          boxes = boxes.map( box => {
+            new google.maps.Rectangle({
               bounds: boxes[i],
               fillOpacity: 0,
               strokeOpacity: 1.0,
@@ -46,11 +47,11 @@ function initMap() {
             });
 
 
-            mapBox.setMap(map);
+            // mapBox.setMap(map);
           });
 
           console.log("boxes: ", boxes); //array of nested tuples in format: ((lat0, lon0), (lat1, lon1), (lat2, lon2), (lat3, lon3))
-          // searchArea(boxes, coords=coords);
+          searchArea(boxes, coords=coords);
           // Perform search over each bounds
 
 
@@ -106,8 +107,9 @@ function initMap() {
         strokeWeight: 1,
         map: map
       });
+      console.log("boxpolys[i] : ", boxpolys[i].bounds)
     }
-
+    console.log("boxpolys: " + boxpolys);
     searchArea(boxpolys, coords=coords);
   }
   // function searchArea(boxes) {
@@ -124,6 +126,7 @@ function initMap() {
       // $( ".result" ).html( data );
       alert( "Load was performed." );
       coords = data;
+      console.log("coords0: ", coords[0][0][0]);
       mapCoords(data);
 
     });
@@ -182,24 +185,47 @@ function mapCoords(coords) {
 
 
 function searchArea(boxes, coords=coords) {
+
   console.log("coords: ", coords);
-  var latLons = coords.map( coord => {
-    new google.maps.LatLng(coord[0], coord[1]);
+  coords.forEach( coord => {
+    var position = new google.maps.LatLng(coord[0], coord[1]);
+    var myBox = boxes[0];
+
+    debugger;
+    console.log("Random test!!!!!!");
+    var myCoord = new google.maps.LatLng(43.61364486432118, -116.19343399330964);
+    console.log("Check get Bounds: " + myBox.getBounds().contains(myCoord));
+
+    console.log("Random test!!!!!!");
+    let test = google.maps.geometry.poly.containsLocation(position, myBox);
+    if( test ) {
+      console.log("Found a light!");
+    }
+
   })
 
-  latLons.forEach( latLon => {
-    console.log("latlong: " + latLon);
-    boxes.forEach( box => {
-      if(google.maps.geometry.poly.containsLocation(latLon, box)) {
-        var marker = new google.maps.Marker({
-          position: latLon,
-          map: map,
-          title: 'streetlight'
-        });
-      }
 
-    })
-  })
+
+
+
+  // var latLons = coords.map( coord => {
+  //   new google.maps.LatLng(coord[0], coord[1]);
+  // })
+  // console.log(latLons);
+  //
+  // latLons.forEach( latLon => {
+  //   console.log("latlong: " + latLon);
+  //   boxes.forEach( box => {
+  //     if(google.maps.geometry.poly.containsLocation(latLon, box)) {
+  //       var marker = new google.maps.Marker({
+  //         position: latLon,
+  //         map: map,
+  //         title: 'streetlight'
+  //       });
+  //     }
+  //
+  //   })
+  // })
 
 
 }
