@@ -3,6 +3,8 @@ function initMap() {
   var coords;
   var distance = 0.02; // in km
 
+  var rboxer = new RouteBoxer();
+
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
 
@@ -49,7 +51,7 @@ function initMap() {
 
             // polyline = google.maps.geometry.encoding.decodePath(response.routes[i].overview_polyline);
             polyline = new google.maps.Polyline({
-              path: response.routes[i].overview_polyline
+              path: response.routes[i].overview_path
             });
             //encoded polyline
 
