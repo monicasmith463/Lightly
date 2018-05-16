@@ -3,7 +3,7 @@ function initMap() {
   var coords;
   var distance = 0.02; // in km
 
-  var rboxer = new RouteBoxer();
+  var routeBoxer = new RouteBoxer();
 
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
@@ -30,16 +30,31 @@ function initMap() {
     function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
 
-          // // Box the overview path of the first route
-          // var path = response.routes[0].overview_path;
-          // var boxes = routeBoxer.box(path, distance);
-          //
-          // for (var i = 0; i < boxes.length; i++) {
-          //   var bounds = boxes[i];
-          //   console.log("bounds: " + bounds);
-          //   // searchArea(bounds);
-          //   // Perform search over this bounds
-          // }
+          // Box the overview path of the first route
+          var path = response.routes[0].overview_path;
+          var boxes = routeBoxer.box(path, distance);
+          drawBoxes(boxes);
+          console.log("boxes: ", typeof boxes[0].b.b);
+          boxes.forEach( box => {
+            var mapBox = new google.maps.Rectangle({
+              bounds: boxes[i],
+              fillOpacity: 0,
+              strokeOpacity: 1.0,
+              strokeColor: '#000000',
+              strokeWeight: 1,
+              map: map
+            });
+
+
+            mapBox.setMap(map);
+          });
+
+          console.log("boxes: ", boxes); //array of nested tuples in format: ((lat0, lon0), (lat1, lon1), (lat2, lon2), (lat3, lon3))
+          // searchArea(boxes, coords=coords);
+          // Perform search over each bounds
+
+
+
 
           for (var i = 0; i < response.routes.length; i++) {
             console.log(response);
@@ -56,7 +71,7 @@ function initMap() {
             //encoded polyline
 
             polyline.setMap(map);
-            findNearbyLights(polyline, coords=coords);
+            // findNearbyLights(polyline, coords=coords);
           }
 
         } else {
@@ -80,7 +95,21 @@ function initMap() {
     // });
   }
 
+  function drawBoxes(boxes) {
+    boxpolys = new Array(boxes.length);
+    for (var i = 0; i < boxes.length; i++) {
+      boxpolys[i] = new google.maps.Rectangle({
+        bounds: boxes[i],
+        fillOpacity: 0,
+        strokeOpacity: 1.0,
+        strokeColor: '#000000',
+        strokeWeight: 1,
+        map: map
+      });
+    }
 
+    searchArea(boxpolys, coords=coords);
+  }
   // function searchArea(boxes) {
   //   // boundedLights = [];
   //   // boxes.forEach( box => {
@@ -151,6 +180,30 @@ function mapCoords(coords) {
 };
 
 
+
+function searchArea(boxes, coords=coords) {
+  console.log("coords: ", coords);
+  var latLons = coords.map( coord => {
+    new google.maps.LatLng(coord[0], coord[1]);
+  })
+
+  latLons.forEach( latLon => {
+    console.log("latlong: " + latLon);
+    boxes.forEach( box => {
+      if(google.maps.geometry.poly.containsLocation(latLon, box)) {
+        var marker = new google.maps.Marker({
+          position: latLon,
+          map: map,
+          title: 'streetlight'
+        });
+      }
+
+    })
+  })
+
+
+}
+
 function findNearbyLights(polyline, coords=coords) {
   console.log("polyline: ", polyline);
   coords.forEach(coord => {
@@ -165,13 +218,6 @@ function findNearbyLights(polyline, coords=coords) {
     console.log("coordinates: ", coord[0], coord[1] );
     console.log("light position: ", lightPosition);
      // Add the circle for this city to the map.
-    var cascadiaFault = new google.maps.Polyline({
-    path: [
-      new google.maps.LatLng(49.95, -128.1),
-      new google.maps.LatLng(46.26, -126.3),
-      new google.maps.LatLng(40.3, -125.4)
-    ]
-    });
 
     let test = google.maps.geometry.poly.containsLocation(lightPosition, polyline);
     console.log(test);
