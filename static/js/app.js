@@ -189,18 +189,28 @@ function searchArea(boxes, coords=coords) {
   console.log("coords: ", coords);
   coords.forEach( coord => {
     var position = new google.maps.LatLng(coord[0], coord[1]);
-    var myBox = boxes[0];
-
-    debugger;
-    console.log("Random test!!!!!!");
-    var myCoord = new google.maps.LatLng(43.61364486432118, -116.19343399330964);
-    console.log("Check get Bounds: " + myBox.getBounds().contains(myCoord));
-
-    console.log("Random test!!!!!!");
-    let test = google.maps.geometry.poly.containsLocation(position, myBox);
-    if( test ) {
-      console.log("Found a light!");
+    // console.log(boxes);
+    // var myBox = boxes[0];
+    // if(myBox.getBounds().contains(position)) {
+    //   console.log('Working');
+    // } else {
+    //   console.log('Not working');
+    // }
+    for(var i=0; i<boxes.length; i++) {
+      if( boxes[i] && boxes[i].getBounds().contains(position) ) {
+        console.log("HI!!");
+      }
     }
+
+
+
+    // var myCoord = new google.maps.LatLng(43.61364486432118, -116.19343399330964);
+    // console.log("Check get Bounds: " + myBox.getBounds().contains(myCoord));
+    //
+    // let test = google.maps.geometry.poly.containsLocation(position, myBox);
+    // if( test ) {
+    //
+    // }
 
   })
 
