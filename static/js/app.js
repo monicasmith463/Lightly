@@ -1,6 +1,6 @@
 function initMap() {
 //declare global variables
-  let coords;
+  // let coords = null;
   const distance = 0.01; // in km
 //route ratings: array for storing the ratings for each route
   let routeRatings;
@@ -23,16 +23,20 @@ function initMap() {
 
   function getData() {
     $.get('/coordinate-data', function( data ) {
-      //set global coords variable to array of LatLngs for mapping
-      coords = data.map( coord => {
-        new google.maps.LatLng(coord[0], coord[1]);
-      });
+        //set global coords variable to array of LatLngs for mapping
+        // var coords = data.map( coord => {
+        //   new google.maps.LatLng(coord[0], coord[1]);
+        // });
+        // let tester = new google.maps.LatLng(data[0][0], data[0][1]);
+        // console.log("inside get Data: ", tester, tester.lat, tester.lng);
+        //calculate routes
+        calculateRoutes(directionsService, directionsDisplay, coordinates=data);
     })
   };
 
 
-  function calculateRoutes(directionsService, directionsDisplay) {
-
+  function calculateRoutes(directionsService, directionsDisplay, coordinates) {
+    console.log("Inside calculate routes: ", coordinates);
     directionsService.route({
       origin: '414 N 1st St Boise, ID 83702',
       destination: '300 E Jefferson St #300 Boise, ID 83712',
@@ -42,16 +46,26 @@ function initMap() {
 
     function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
-
+          console.log("TEST!!!");
           //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
-          let boxedRoutes = boxRoutes(response);
-          let 
+          let bestRoute = getBestRoute(response, coordinates);
+          console.log(bestRoute);
+          // let userRoute = searchArea(boxedRoutes, coords=coords);
 
 
         } else {
           window.alert('Directions request failed due to ' + status);
         }
       })
+  }
+
+  function getBestRoute(response, coordinates) {
+    //iterate over API response routes and box them
+    let boxedRoutes = boxRoutes(response);
+    boxedRoutes.forEach( boxedRoute => {
+      console.log("Inside get best route: ", boxedRoute);
+    })
+    return searchArea(boxedRoutes, coordinates);
   }
 
   function boxRoutes(response) {
@@ -66,26 +80,67 @@ function initMap() {
       let path = response.routes[i].overview_path;
 
       let boxes = routeBoxer.box(path, distance);
+      console.log('boxes: ', boxes);
       //boxes are an array of nested tuples in format: ((lat0, lon0), (lat1, lon1), (lat2, lon2), (lat3, lon3))
-      let boxpolys = boxes.map( box => {
-        new google.maps.Rectangle({
+      // let boxpolys = boxes.map( box => {
+      //   new google.maps.Rectangle({
+      //     bounds: box,
+      //     fillOpacity: 0,
+      //     strokeOpacity: 1.0,
+      //     strokeColor: '#000000',
+      //     strokeWeight: 1,
+      //     map: map
+      //   })
+      // });
+      let boxpolys = [];
+      boxes.forEach( box => {
+        let newBox = new google.maps.Rectangle({
           bounds: box,
           fillOpacity: 0,
           strokeOpacity: 1.0,
           strokeColor: '#000000',
           strokeWeight: 1,
           map: map
-        })
+        });
+        boxpolys.push(newBox);
       });
-      boxedRoutes.push([route, boxpolys]);
+      boxedRoutes.push(boxpolys);
     }
+    console.log("inside box routes: ", boxedRoutes);
     return boxedRoutes;
   }
+
+function searchArea(boxedRoutes, coordinates) {
+  //search over routes and determine which is best-lit
+  let bestLightCount = 0;
+  let bestRoute = boxedRoutes[0];
+  console.log("inside search: ", coordinates);
+  coordinates.forEach( coordinate => {
+    let position = new google.maps.LatLng(coordinate[0], coordinate[1]);
+    for(var i=0; i<boxedRoutes.length; i++) {
+      let lightCount = 0;
+      for(var j=0; j<boxedRoutes[i].length; j++) {
+        if( boxedRoutes[i][j] && boxedRoutes[i][j].getBounds().contains(position) ) {
+          lightCount += 1;
+        }
+      }
+      if(lightCount > bestLightCount) {
+        bestRoute = boxedRoutes[i];
+        bestLightCount = lightCount;
+      }
+    }
+
+  })
+
+  // boxedRoutes.forEach( boxedRoute => {
+  //   if boxedRoute[0]
+  // })
+  return [bestRoute, bestLightCount];
+};
 
 //first get coordinate data from AJAX call
 getData();
 
-//calculate routes
-calculateRoutes(directionsService, directionsDisplay);
+
 
 };
