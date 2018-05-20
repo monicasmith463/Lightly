@@ -72,11 +72,11 @@ function initMap() {
     //iterate over API response routes and box them
     let boxedRoutes = [];
     for(let i=0; i<response.routes.length; i++) {
-      var route = new google.maps.DirectionsRenderer({
-        map: map,
-        directions: response,
-        routeIndex: i
-      })
+    //   var route = new google.maps.DirectionsRenderer({
+    //     map: map,
+    //     directions: response,
+    //     routeIndex: i
+    //   })
       let path = response.routes[i].overview_path;
 
       let boxes = routeBoxer.box(path, distance);
@@ -114,28 +114,34 @@ function searchArea(boxedRoutes, coordinates) {
   //search over routes and determine which is best-lit
   let bestLightCount = 0;
   let bestRoute = boxedRoutes[0];
+  let lightCount = 0;
   console.log("inside search: ", coordinates);
-  coordinates.forEach( coordinate => {
-    let position = new google.maps.LatLng(coordinate[0], coordinate[1]);
+  for(var x=0; x<coordinates.length; x++) {
+    let position = new google.maps.LatLng(coordinates[x][0], coordinates[x][1]);
     for(var i=0; i<boxedRoutes.length; i++) {
-      let lightCount = 0;
       for(var j=0; j<boxedRoutes[i].length; j++) {
+
         if( boxedRoutes[i][j] && boxedRoutes[i][j].getBounds().contains(position) ) {
-          lightCount += 1;
+          console.log("boxedRoutes[i][j]: ", boxedRoutes[i][j]);
+          lightCount = lightCount + 1;
+          console.log("light count: ", lightCount);
         }
       }
       if(lightCount > bestLightCount) {
-        bestRoute = boxedRoutes[i];
+        bestRouteIndex = i;
         bestLightCount = lightCount;
+        console.log("best light count :", bestLightCount);
       }
-    }
 
-  })
+    }
+    lightCount = 0;
+
+  }
 
   // boxedRoutes.forEach( boxedRoute => {
   //   if boxedRoute[0]
   // })
-  return [bestRoute, bestLightCount];
+  return [bestRouteIndex, bestLightCount];
 };
 
 //first get coordinate data from AJAX call
