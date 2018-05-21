@@ -1,25 +1,33 @@
 function initMap() {
-//declare global variables
-  // let coords = null;
-  const distance = 0.01; // in km
-//route ratings: array for storing the ratings for each route
-  let routeRatings;
+  //set up autocomplete
+  // var card = document.getElementById('pac-card');
+  // var input = document.getElementById('pac-input');
+  // var types = document.getElementById('type-selector');
+  // var strictBounds = document.getElementById('strict-bounds-selector');
 
-//instatiate routeBoxer from the library for boxing in route
-  const routeBoxer = new RouteBoxer();
-
-//set up directions Service and directions display
+  //set up directions Service and directions display
   const directionsService = new google.maps.DirectionsService;
   const directionsDisplay = new google.maps.DirectionsRenderer;
 
-//create a new map object centered around Boise
+  //create a new map object centered around Boise
   const map = new google.maps.Map(document.getElementById('map'), {
+    mapTypeControl: false,
     zoom: 4,
     center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
   });
 
-//set the map on the directions display
+  //set the map on the directions display
   directionsDisplay.setMap(map);
+
+
+// perform route calulation and routing based on light density along routes
+
+  const distance = 0.01; // distance from route for box converage in km.
+  //route ratings: array for storing the ratings for each route
+  let routeRatings;
+
+//instatiate routeBoxer from the library for boxing in route
+  const routeBoxer = new RouteBoxer();
 
   function getData() {
     $.get('/coordinate-data', function(data) {
@@ -29,24 +37,27 @@ function initMap() {
 
 
   function calculateRoutes(directionsService, directionsDisplay, coordinates) {
-    console.log("Inside calculate routes: ", coordinates);
+
     directionsService.route({
-      origin: '414 N 1st St Boise, ID 83702',
-      destination: '300 E Jefferson St #300 Boise, ID 83712',
+      origin: 'Action Windows, 1227 S Colorado Ave, Boise, ID 83706',
+      destination: '709 W Beacon St, Boise, ID 83706',
       travelMode: 'WALKING',
       provideRouteAlternatives: true
     },
 
     function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
-          //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
-          let lightCounts = getLightCounts(response, coordinates);
+           //if only one route is returned default to route index 0
+          let bestRouteIndex = 0;
+          if(response.routes.length > 1) {
+            let lightCounts = getLightCounts(response, coordinates);
+            bestRouteIndex = getBestRoute(response, lightCounts);
+          }
           var route = new google.maps.DirectionsRenderer({
             map: map,
             directions: response,
-            routeIndex: lightCounts[0]
+            routeIndex: bestRouteIndex
           });
-
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -55,10 +66,8 @@ function initMap() {
 
   function getLightCounts(response, coordinates) {
     //iterate over API response routes and box them
+    //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
     let boxedRoutes = boxRoutes(response);
-    // boxedRoutes.forEach( boxedRoute => {
-    //
-    // })
     return searchAreas(boxedRoutes, coordinates);
   }
 
@@ -106,9 +115,106 @@ function searchAreas(boxedRoutes, coordinates) {
   return lightCounts;
 };
 
+function getBestRoute(response, lightCounts) {
+  //get best route based on light density (light count / distance)
+  let bestRouteIndex = 0;
+  let bestLightDensity = 0;
+  for(var i=0; i<lightCounts.length; i++) {
+    let distance = response.routes[i].legs[0].distance.value;
+    let lightDensity = lightCounts[i]/distance;
+    if(bestLightDensity < lightDensity) {
+      bestRouteIndex = i;
+      bestLightDensity = lightDensity;
+    }
+  }
+  return bestRouteIndex;
+}
+
+new AutocompleteDirectionsHandler(map);
 //first get coordinate data from AJAX call
 getData();
 
 
 
+};
+
+/**
+ * @constructor
+*/
+function AutocompleteDirectionsHandler(map) {
+ this.map = map;
+ this.originPlaceId = null;
+ this.destinationPlaceId = null;
+ this.travelMode = 'WALKING';
+ var originInput = document.getElementById('origin-input');
+ var destinationInput = document.getElementById('destination-input');
+ var modeSelector = document.getElementById('mode-selector');
+ this.directionsService = new google.maps.DirectionsService;
+ this.directionsDisplay = new google.maps.DirectionsRenderer;
+ this.directionsDisplay.setMap(map);
+
+ var originAutocomplete = new google.maps.places.Autocomplete(
+     originInput, {placeIdOnly: true});
+ var destinationAutocomplete = new google.maps.places.Autocomplete(
+     destinationInput, {placeIdOnly: true});
+
+ this.setupClickListener('changemode-walking', 'WALKING');
+ this.setupClickListener('changemode-transit', 'TRANSIT');
+ this.setupClickListener('changemode-driving', 'DRIVING');
+
+ this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
+ this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+
+ this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+ this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+ this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+}
+
+// Sets a listener on a radio button to change the filter type on Places
+// Autocomplete.
+AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode) {
+ var radioButton = document.getElementById(id);
+ var me = this;
+ radioButton.addEventListener('click', function() {
+   me.travelMode = mode;
+   me.route();
+ });
+};
+
+AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+ var me = this;
+ autocomplete.bindTo('bounds', this.map);
+ autocomplete.addListener('place_changed', function() {
+   var place = autocomplete.getPlace();
+   if (!place.place_id) {
+     window.alert("Please select an option from the dropdown list.");
+     return;
+   }
+   if (mode === 'ORIG') {
+     me.originPlaceId = place.place_id;
+   } else {
+     me.destinationPlaceId = place.place_id;
+   }
+   me.route();
+ });
+
+};
+
+AutocompleteDirectionsHandler.prototype.route = function() {
+ if (!this.originPlaceId || !this.destinationPlaceId) {
+   return;
+ }
+ var me = this;
+
+ this.directionsService.route({
+   origin: {'placeId': this.originPlaceId},
+   destination: {'placeId': this.destinationPlaceId},
+   travelMode: this.travelMode
+ }, function(response, status) {
+   if (status === 'OK') {
+     me.directionsDisplay.setDirections(response);
+   } else {
+     window.alert('Directions request failed due to ' + status);
+   }
+ });
 };

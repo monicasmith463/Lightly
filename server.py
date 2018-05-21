@@ -66,8 +66,6 @@ def get_coordinates():
     """Route to get coordinates from database and jsonify."""
 
     coordinates = db.session.query(Light.latitude, Light.longitude).all()
-    print coordinates[-1]
-
     return jsonify(coordinates)
 
 
