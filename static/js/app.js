@@ -1,13 +1,11 @@
 function initMap() {
   //set up autocomplete
-  // var card = document.getElementById('pac-card');
-  // var input = document.getElementById('pac-input');
-  // var types = document.getElementById('type-selector');
-  // var strictBounds = document.getElementById('strict-bounds-selector');
 
   //set up directions Service and directions display
   const directionsService = new google.maps.DirectionsService;
   const directionsDisplay = new google.maps.DirectionsRenderer;
+
+  let coordinates;
 
   //create a new map object centered around Boise
   const map = new google.maps.Map(document.getElementById('map'), {
@@ -31,7 +29,8 @@ function initMap() {
 
   function getData() {
     $.get('/coordinate-data', function(data) {
-        calculateRoutes(directionsService, directionsDisplay, coordinates=data);
+        coordinates = data;
+        calculateRoutes(directionsService, directionsDisplay, coordinates=coordinates);
     })
   };
 
@@ -130,6 +129,10 @@ function getBestRoute(response, lightCounts) {
   return bestRouteIndex;
 }
 
+function LightView(coordinates) {
+  coordinates.forEach()
+}
+
 new AutocompleteDirectionsHandler(map);
 //first get coordinate data from AJAX call
 getData();
@@ -207,14 +210,40 @@ AutocompleteDirectionsHandler.prototype.route = function() {
  var me = this;
 
  this.directionsService.route({
-   origin: {'placeId': this.originPlaceId},
+   origin: {'placeId': this.originPlaceId},,
    destination: {'placeId': this.destinationPlaceId},
-   travelMode: this.travelMode
- }, function(response, status) {
-   if (status === 'OK') {
-     me.directionsDisplay.setDirections(response);
-   } else {
-     window.alert('Directions request failed due to ' + status);
-   }
- });
+   travelMode: this.travelMode,
+   provideRouteAlternatives: true
+ },
+
+ function (response, status) {
+     if (status == google.maps.DirectionsStatus.OK) {
+        //if only one route is returned default to route index 0
+       let bestRouteIndex = 0;
+       if(response.routes.length > 1) {
+         let lightCounts = getLightCounts(response, coordinates);
+         bestRouteIndex = getBestRoute(response, lightCounts);
+       }
+       var route = new google.maps.DirectionsRenderer({
+         map: map,
+         directions: response,
+         routeIndex: bestRouteIndex
+       });
+     } else {
+       window.alert('Directions request failed due to ' + status);
+     }
+   })
+
+
+ // this.directionsService.route({
+ //   origin: {'placeId': this.originPlaceId},
+ //   destination: {'placeId': this.destinationPlaceId},
+ //   travelMode: this.travelMode
+ // }, function(response, status) {
+ //   if (status === 'OK') {
+ //     me.directionsDisplay.setDirections(response);
+ //   } else {
+ //     window.alert('Directions request failed due to ' + status);
+ //   }
+ // });
 };

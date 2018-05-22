@@ -32,6 +32,9 @@ class Light(db.Model):
         return "<Light light_id={} latitude={} longitude={} location={} status={} lamp_type={} wattage={}>".format(self.light_id, self.latitude,
                                                self.longitude, self.location, self.status, self.lamp_type, self.wattage)
 
+class User(db.Model):
+        """User data including fname, lname, email, password."""
+
 #####################################################################
 # Helper functions
 
