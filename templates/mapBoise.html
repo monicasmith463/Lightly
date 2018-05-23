@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple markers</title>
+    <title>Lightly</title>
     <style>
 
        /* Always set the map height explicitly to define the size of the div
@@ -27,6 +27,19 @@
          outline: none;
          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
        }
+        #floating-panel {
+          position: absolute;
+          top: 10px;
+          left: 25%;
+          z-index: 5;
+          background-color: #fff;
+          padding: 5px;
+          border: 1px solid #999;
+          text-align: center;
+          font-family: 'Roboto','sans-serif';
+          line-height: 30px;
+          padding-left: 10px;
+        }
 
        #origin-input,
        #destination-input {
@@ -91,11 +104,5 @@
     <script type="text/javascript" src="https://rawgit.com/denissellu/routeboxer/master/src/RouteBoxer.js"></script>
     <script type="text/javascript" src="../static/js/app.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=places,geometry&callback=initMap"></script>
-
-<!--
-    <script async defer
-
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=geometry,places&callback=initMap">
-    </script> -->
   </body>
 </html>
