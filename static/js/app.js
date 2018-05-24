@@ -1,55 +1,79 @@
-let coordinates;
-let markers;
+var coordinates = null;
+var markers;
 
 const distance = 0.01; // distance from route for box converage in km.
-//route ratings: array for storing the ratings for each route
-let routeRatings;
 
 function initMap() {
-  //set up autocomplete
 
-  //set up directions Service and directions display
-  const directionsService = new google.maps.DirectionsService;
-  const directionsDisplay = new google.maps.DirectionsRenderer;
+  let promise = Promise.resolve($.get('/coordinate-data',
+                                      function(data) {
+                                        coordinates = data;
+                                      })
+                                )
 
-  //create a new map object centered around Boise
-  const map = new google.maps.Map(document.getElementById('map'), {
-    mapTypeControl: false,
-    zoom: 10,
-    center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
-  });
+  promise.then(function(response) {
+    console.log("success!", window.coordinates[0]);
+    //set up autocomplete
 
-  //set the map on the directions display
-  directionsDisplay.setMap(map);
+    //set up directions Service and directions display
+    const directionsService = new google.maps.DirectionsService;
+    const directionsDisplay = new google.maps.DirectionsRenderer;
 
-  function mapLights(coords=coordinates) {
-    markers = coords.map( coord => {
-      new google.maps.Marker({
-        position: { lat: coord[0], lng: coord[1] },
-        map: map
-      });
-    })
-  }
+    //create a new map object centered around Boise
+    const windowMap = new google.maps.Map(document.getElementById('map'), {
+      mapTypeControl: false,
+      zoom: 10,
+      center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
+    });
+    //set the map on the directions display
+    directionsDisplay.setMap(map);
 
-  // Sets the map on all markers in the array.
-  function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-    }
-  }
+    (function mapLights(coords) {
+      console.log(coords[0]);
+      markers = coords.map( coord => {
+        new google.maps.Marker({
+          position: { lat: coord[0], lng: coord[1] },
+          map: map
+        });
+      })
+      console.log("markers:", markers[0]);
+    })(coordinates);
 
-  const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
+    // Sets the map on all markers in the array.
+    (function setMapOnAll(map) {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+      }
+    })(windowMap);
 
-  function getData() {
-    $.get('/coordinate-data', function(data) {
-        coordinates = data;
-    })
-  };
+    const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
+
+    }, function(xhrObj, textStatus, err) {
+    console.log("Request failed due to ", textStatus);
+  })
+
+  // function getData(){
+  //   var promise = $.http({
+  //     method: 'GET',
+  //       url: '/coordinate-data',
+  //       // data:supplierObj,
+  //       withCredentials: false,
+  //       // contentType:'application/json',
+  //       dataType:'json'
+  //     });
+  //     console.log(promise);
+  //     return promise; //Promise is returned
+  // };
+  // function getData() {
+  //   $.get('/coordinate-data', function(data) {
+  //       window.coordinates = data;
+  //       console.log("coordinates: ", coordinates[0]);
+  //   })
+  // };
+
 
   //first get coordinate data from AJAX call
-  getData();
-  mapLights(coords=coordinates);
-  setMapOnAll(map);
+  // mapLights(coords=coordinates);
 
 
 };
