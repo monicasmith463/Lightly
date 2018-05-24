@@ -1,81 +1,45 @@
-var coordinates = null;
+var coordinates;
 var markers;
 
 const distance = 0.01; // distance from route for box converage in km.
 
 function initMap() {
-
+  //declare a promise to ensure the rest of the script does not execute
+  //before the asycronous AJAX call is is complete.
+  //get data from coordinate-data endpoint:
   let promise = Promise.resolve($.get('/coordinate-data',
                                       function(data) {
                                         coordinates = data;
-                                      })
-                                )
-
+                                }))
+  //set up map
   promise.then(function(response) {
-    console.log("success!", window.coordinates[0]);
-    //set up autocomplete
-
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
 
     //create a new map object centered around Boise
-    const windowMap = new google.maps.Map(document.getElementById('map'), {
+    const map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
       zoom: 10,
       center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
     });
-    //set the map on the directions display
-    directionsDisplay.setMap(map);
 
+    //set light markers on map
     (function mapLights(coords) {
-      console.log(coords[0]);
-      markers = coords.map( coord => {
-        new google.maps.Marker({
+      coords.forEach( coord => {
+        let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
           map: map
         });
+        marker.setMap(map);
       })
-      console.log("markers:", markers[0]);
     })(coordinates);
-
-    // Sets the map on all markers in the array.
-    (function setMapOnAll(map) {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-      }
-    })(windowMap);
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
 
     }, function(xhrObj, textStatus, err) {
     console.log("Request failed due to ", textStatus);
   })
-
-  // function getData(){
-  //   var promise = $.http({
-  //     method: 'GET',
-  //       url: '/coordinate-data',
-  //       // data:supplierObj,
-  //       withCredentials: false,
-  //       // contentType:'application/json',
-  //       dataType:'json'
-  //     });
-  //     console.log(promise);
-  //     return promise; //Promise is returned
-  // };
-  // function getData() {
-  //   $.get('/coordinate-data', function(data) {
-  //       window.coordinates = data;
-  //       console.log("coordinates: ", coordinates[0]);
-  //   })
-  // };
-
-
-  //first get coordinate data from AJAX call
-  // mapLights(coords=coordinates);
-
-
 };
 
 function getLightCounts(response, routeBoxer, coordinates) {
@@ -93,6 +57,7 @@ function boxRoutes(response, routeBoxer) {
 
     //routeBoxer returns an array of four tuples, the bounds of a rectangle
     let boxes = routeBoxer.box(path, distance);
+
     let boxpolys = [];
     boxes.forEach( box => {
       let newBox = new google.maps.Rectangle({
@@ -114,7 +79,7 @@ function searchAreas(boxedRoutes, coordinates) {
   //search over routes and return light count for each as an array
   let lightCounts = [];
 
-  boxedRoute.forEach( boxedRoute => {
+  boxedRoutes.forEach( boxedRoute => {
     let lightCount = 0;
     boxedRoute.forEach( box => {
       coordinates.forEach( coordinate => {
@@ -123,7 +88,6 @@ function searchAreas(boxedRoutes, coordinates) {
         //if so, increase light count
         let position = new google.maps.LatLng(coordinate[0], coordinate[1]);
         if(box && box.getBounds().contains(position)) {
-          console.log("in box");
           lightCount += 1;
         }
       })
@@ -135,7 +99,7 @@ function searchAreas(boxedRoutes, coordinates) {
 };
 
 function getBestRoute(response, lightCounts) {
-  //get best route based on light density (light count / distance)
+  //get best route based on light density along route (light count / distance)
   let bestRouteIndex = 0;
   let bestLightDensity = 0;
   for(var i=0; i<response.routes.length; i++) {
@@ -163,7 +127,7 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   var modeSelector = document.getElementById('mode-selector');
   this.directionsService = directionsService;
   this.directionsDisplay = directionsDisplay;
-  // this.directionsDisplay.setMap(map);
+  this.directionsDisplay.setMap(map);
 
   var originAutocomplete = new google.maps.places.Autocomplete(
      originInput, {placeIdOnly: true});
@@ -230,6 +194,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
      if (status == google.maps.DirectionsStatus.OK) {
         //if only one route is returned default to route index 0
        let bestRouteIndex = 0;
+       //else, perform route optimization based on light positions
        if(response.routes.length > 1) {
          let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
          bestRouteIndex = getBestRoute(response, lightCounts);

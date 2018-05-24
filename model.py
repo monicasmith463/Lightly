@@ -32,8 +32,22 @@ class Light(db.Model):
         return "<Light light_id={} latitude={} longitude={} location={} status={} lamp_type={} wattage={}>".format(self.light_id, self.latitude,
                                                self.longitude, self.location, self.status, self.lamp_type, self.wattage)
 
-# class User(db.Model):
-#         """User data including fname, lname, email, password."""
+
+class User(db.Model):
+    """User"""
+
+    __tablename__ = "users"
+
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(20))
+
+
+
+    def __repr__(self):
+        """Provides more helpful output when printed"""
+
+        return "<User user_id: {} username: {}>".format(self.user_id, self.username)
 
 #####################################################################
 # Helper functions
