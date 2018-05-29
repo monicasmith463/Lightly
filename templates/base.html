@@ -7,6 +7,11 @@
 
   <title>Lightly</title>
 
+  <style>
+    {% block style %}
+    {% endblock %}
+  </style>
+
 </head>
 <body>
 <nav class="navbar navbar-inverse" style="margin-bottom: 0px">
@@ -59,12 +64,15 @@
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+{% block script %}
+{% endblock %}
+
+<!-- <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
 <script src="http://unpkg.com/babel-standalone"></script>
 
-<script src="../static/js/test.jsx" type="text/jsx"></script>
+<script src="../static/js/test.jsx" type="text/jsx"></script> -->
 
 
 </body>

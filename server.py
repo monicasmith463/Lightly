@@ -29,7 +29,7 @@ def map():
     #
     # lights = Light.query.all()
 
-    return render_template("mapBoise.html")
+    return render_template("mapBoise2.html")
 
 @app.route('/login', methods=['GET'])
 def login_form():

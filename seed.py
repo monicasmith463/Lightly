@@ -1,6 +1,7 @@
 """Utility file to seed lights database from data.gov streetlight data in seed_data/"""
 
 # import datetime
+import random
 from sqlalchemy import func
 from faker import Faker
 import json
@@ -49,8 +50,13 @@ def load_light_data(filename):
 
     def load_user_data():
         """Load fake user data to seed database."""
-        for i in range(1000):
-            
+        #characters for generating passwords
+        chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789"
+        for i in range(200):
+            username = fake.name()
+            password = ''.join(map(lambda x: random.choice(chars), range(random.randInt(6, 10))))
+
+            user = User(username=username)
 
 if __name__ == "__main__":
     connect_to_db(app)

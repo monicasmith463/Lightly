@@ -1,3 +1,8 @@
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+
 var coordinates;
 var markers;
 
@@ -10,9 +15,9 @@ function initMap() {
   let promise = Promise.resolve($.get('/coordinate-data',
                                       function(data) {
                                         coordinates = data;
-                                }))
+                                 }))
   //set up map
-  promise.then(function(response) {
+  promise.then( response => {
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
@@ -25,7 +30,7 @@ function initMap() {
     });
 
     //set light markers on map
-    (function mapLights(coords) {
+    const mapLights = (coords) => {
       coords.forEach( coord => {
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
@@ -33,31 +38,31 @@ function initMap() {
         });
         marker.setMap(map);
       })
-    })(coordinates);
+    };
+
+    mapLights(coordinates);
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
 
-    }, function(xhrObj, textStatus, err) {
+  }, (xhrObj, textStatus, err) => {
     console.log("Request failed due to ", textStatus);
   })
 };
 
-function getLightCounts(response, routeBoxer, coordinates) {
+const getLightCounts = (response, routeBoxer, coordinates) => {
   //iterate over API response routes and box them
   //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
   let boxedRoutes = boxRoutes(response, routeBoxer);
   return searchAreas(boxedRoutes, coordinates);
 }
 
-function boxRoutes(response, routeBoxer) {
+const boxRoutes = (response, routeBoxer) => {
   //iterate over API response routes and box them
   let boxedRoutes = [];
-  for(let i=0; i<response.routes.length; i++) {
-    let path = response.routes[i].overview_path;
-
+  response.routes.forEach( route => {
+    let path = route.overview_path;
     //routeBoxer returns an array of four tuples, the bounds of a rectangle
     let boxes = routeBoxer.box(path, distance);
-
     let boxpolys = [];
     boxes.forEach( box => {
       let newBox = new google.maps.Rectangle({
@@ -71,11 +76,11 @@ function boxRoutes(response, routeBoxer) {
       boxpolys.push(newBox);
     });
     boxedRoutes.push(boxpolys);
-  }
+  })
   return boxedRoutes;
 }
 
-function searchAreas(boxedRoutes, coordinates) {
+const searchAreas = (boxedRoutes, coordinates) => {
   //search over routes and return light count for each as an array
   let lightCounts = [];
 
@@ -98,11 +103,11 @@ function searchAreas(boxedRoutes, coordinates) {
   return lightCounts;
 };
 
-function getBestRoute(response, lightCounts) {
+const getBestRoute = (response, lightCounts) => {
   //get best route based on light density along route (light count / distance)
   let bestRouteIndex = 0;
   let bestLightDensity = 0;
-  for(var i=0; i<response.routes.length; i++) {
+  for(let i=0; i<response.routes.length; i++) {
     let distance = response.routes[i].legs[0].distance.value;
     let lightDensity = lightCounts[i]/distance;
     if(bestLightDensity < lightDensity) {

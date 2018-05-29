@@ -2,6 +2,8 @@
 
 from flask_sqlalchemy import SQLAlchemy
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # Connect to the PostgreSQL database through the Flask-SQLAlchemy helper library.
 #Initiate the `session` object
 
@@ -38,11 +40,9 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(20))
-
-
 
     def __repr__(self):
         """Provides more helpful output when printed"""

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block style %}
+
+     /* Always set the map height explicitly to define the size of the div
+      * element that contains the map. */
+     #map {
+       height: 100%;
+     }
+     /* Optional: Makes the sample page fill the window. */
+     html, body {
+       height: 50%;
+       margin: 0;
+       padding: 0;
+     }
+     .controls {
+       margin-top: 10px;
+       border: 1px solid transparent;
+       border-radius: 2px 0 0 2px;
+       box-sizing: border-box;
+       -moz-box-sizing: border-box;
+       height: 32px;
+       outline: none;
+       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+     }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        right: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+
+     #origin-input,
+     #destination-input {
+       background-color: #fff;
+       font-family: Roboto;
+       font-size: 15px;
+       font-weight: 300;
+       margin-left: 12px;
+       padding: 0 11px 0 13px;
+       text-overflow: ellipsis;
+       width: 200px;
+     }
+
+     #origin-input:focus,
+     #destination-input:focus {
+       border-color: #4d90fe;
+     }
+
+     #mode-selector {
+       color: #fff;
+       background-color: #4d90fe;
+       margin-left: 12px;
+       padding: 5px 11px 0px 11px;
+     }
+
+     #mode-selector label {
+       font-family: Roboto;
+       font-size: 13px;
+       font-weight: 300;
+     }
+
+     #title {
+       color: #fff;
+       background-color: #4d90fe;
+       font-size: 25px;
+       font-weight: 500;
+       padding: 6px 12px;
+     }
+{% endblock %}
+
+{% block content %}
+<input id="origin-input" class="controls" type="text"
+    placeholder="Enter an origin location">
+
+<input id="destination-input" class="controls" type="text"
+    placeholder="Enter a destination location">
+
+<div id="mode-selector" class="controls">
+  <input type="radio" name="type" id="changemode-walking" checked="checked">
+  <label for="changemode-walking">Walking</label>
+
+  <input type="radio" name="type" id="changemode-transit">
+  <label for="changemode-transit">Transit</label>
+
+  <input type="radio" name="type" id="changemode-driving">
+  <label for="changemode-driving">Driving</label>
+</div>
+<div id="floating-panel">
+  <input onclick="clearMarkers();" type=button value="Hide Markers">
+  <input onclick="showMarkers();" type=button value="Show All Markers">
+</div>
+<div id="map"></div>
+{% endblock %}
+
+{% block script %}
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <script src="http://unpkg.com/babel-standalone"></script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/denissellu/routeboxer/master/src/RouteBoxer.js"></script>
+    <script type="text/javascript" src="../static/js/app.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=places,geometry&callback=initMap"></script>
+  </body>
+
+{% endblock %}
