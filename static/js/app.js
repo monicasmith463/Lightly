@@ -15,7 +15,8 @@ function initMap() {
   let promise = Promise.resolve($.get('/coordinate-data',
                                       function(data) {
                                         coordinates = data;
-                                 }))
+                                      })
+                               )
   //set up map
   promise.then( response => {
     //set up directions Service and directions display
