@@ -4,9 +4,10 @@
 import random
 from sqlalchemy import func
 from faker import Faker
+fake = Faker()
 import json
 
-from model import Light, connect_to_db, db
+from model import Light, User, connect_to_db, db
 from server import app
 
 #hardcode the number of fake users to be added to database
@@ -49,17 +50,19 @@ def load_light_data(filename):
     # Commit at the end
     db.session.commit()
 
-    def load_user_data():
-        """Load fake user data to seed database."""
-        #characters for generating passwords
-        chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789"
-        #load 200 users
-        for i in range(200):
-            username = fake.name()
-            password = ''.join(map(lambda x: random.choice(chars), range(random.randInt(6, 10))))
-            user = User(username=username)
-            db.session.add(user)
-        db.session.commit()
+def load_user_data():
+    """Load fake user data to seed database."""
+    #characters for generating passwords
+    chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789"
+    #load 200 users
+    for i in range(1):
+        username = fake.name()
+        password = ''.join(map(lambda x: random.choice(chars), range(random.randint(6, 10))))
+        print "password: ", password
+        user = User(username=username, password=password)
+        print user
+        db.session.add(user)
+    db.session.commit()
 
 if __name__ == "__main__":
     connect_to_db(app)
@@ -67,8 +70,8 @@ if __name__ == "__main__":
 
     data_filename = "seed_data/Boise_Streetlights.json"
 
-    load_light_data(data_filename)
+    # load_light_data(data_filename)
     load_user_data()
     # set_val_user_id()
 
-load_light_data("seed_data/Boise_Streetlights.json")
+# load_light_data("seed_data/Boise_Streetlights.json")

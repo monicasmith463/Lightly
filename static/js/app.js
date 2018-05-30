@@ -1,8 +1,3 @@
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
-
 var coordinates;
 var markers;
 

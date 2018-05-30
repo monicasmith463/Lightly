@@ -1,8 +1,11 @@
 """Models and database functions for the Lightly app."""
 
 from flask_sqlalchemy import SQLAlchemy
+from faker import Faker
+fake = Faker()
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy_utils import PasswordType, force_auto_coercion
+force_auto_coercion()
 
 # Connect to the PostgreSQL database through the Flask-SQLAlchemy helper library.
 #Initiate the `session` object
@@ -42,12 +45,23 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(20))
+    password = db.Column(
+                            PasswordType(
+                                # The returned dictionary is forwarded to the CryptContext
+                                onload=lambda **kwargs: dict(
+                                    schemes=['pbkdf2_sha512', 'md5_crypt'],
+                                    **kwargs
+                                ),
+                            ),
+                            unique=False,
+                            nullable=False,
+                        )
+
 
     def __repr__(self):
         """Provides more helpful output when printed"""
 
-        return "<User user_id: {} username: {}>".format(self.user_id, self.username)
+        return "<User user_id: {} username: {} password:{}>".format(self.user_id, self.username, self.password)
 
 #####################################################################
 # Helper functions
@@ -58,8 +72,11 @@ def connect_to_db(app):
     # Configure to use our PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///lights'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    #configure password encryption. Set encryption schemes:
     db.app = app
     db.init_app(app)
+    # app.config['PASSWORD_SCHEMES'] =
+
 
 
 if __name__ == "__main__":

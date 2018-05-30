@@ -2,7 +2,16 @@
 {% block content %}
 <br>
 <div class="well spaced" style="width:97%">
-  <h2>{{ user.email }} ({{ user.user_id }})</h2>
+  <h2>{{ user.username }} ({{ user.user_id }})</h2>
 
 </div>
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+<script src="http://unpkg.com/babel-standalone"></script>
+
+<script src="../static/test.jsx" type="text/jsx"></script>
 {% endblock %}
