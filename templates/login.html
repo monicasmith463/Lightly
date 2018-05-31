@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="well spaced" style="width:40%;">
+<!-- <div class="well spaced" style="width:40%;">
 <div>
   <h1>Login</h1>
   <form action="/login" method="POST">
@@ -23,5 +23,17 @@
 
   </form>
 </div>
-</div>
+</div> -->
+<div id="login-form"></div>
+<script type="text/jsx" src="../static/js/login_form.jsx">
+</script>
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+<!-- <script src="http://unpkg.com/babel-standalone"></script> -->
+<!-- src for react-bootstrap -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min.js"></script> -->
 {% endblock %}

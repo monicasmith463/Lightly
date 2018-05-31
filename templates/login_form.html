@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="well spaced" style="width:40%;">
-<div>
+
   <h1>Login</h1>
-  <form action="/login" method="POST">
+  <!-- <form action="/login" method="POST">
 
     <div class="form-group">
       <label>Username:
@@ -21,7 +21,20 @@
       <input type="submit" value="Log In" class="btn">
     </div>
 
-  </form>
+  </form> -->
+
+  <script type="text/jsx" src="../static/js/login_form.jsx">
+  </script>
 </div>
-</div>
+{% endblock %}
+
+{% block script %}
+<!-- <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script> -->
+
+<!-- <script src="http://unpkg.com/babel-standalone"></script> -->
+<!-- src for react-bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.32.1/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.32.1/react-dom.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min.js"></script> -->
 {% endblock %}

@@ -1,8 +1,6 @@
 """Models and database functions for the Lightly app."""
 
 from flask_sqlalchemy import SQLAlchemy
-from faker import Faker
-fake = Faker()
 
 from sqlalchemy_utils import PasswordType, force_auto_coercion
 force_auto_coercion()

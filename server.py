@@ -37,17 +37,15 @@ def register_process():
     # Get form variables
     email = request.form["email"]
     password = request.form["password"]
-    age = int(request.form["age"])
-    zipcode = request.form["zipcode"]
 
-    new_user = User(email=email, password=password, age=age, zipcode=zipcode)
+    new_user = User(username=username, password=password)
 
     db.session.add(new_user)
     db.session.commit()
 
     flash("User {} added.".format(email))
     return redirect("/users/{}".format(new_user.user_id))
-    
+
 @app.route('/map')
 def map():
     """Map."""
