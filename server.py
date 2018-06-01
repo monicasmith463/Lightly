@@ -51,7 +51,7 @@ def register_process():
 def map():
     """Map."""
 
-    return render_template("mapBoise2.html")
+    return render_template("map.html")
 
 @app.route('/login', methods=['GET'])
 def login_form():

@@ -102,7 +102,7 @@ const searchAreas = (boxedRoutes, coordinates) => {
   return lightCounts;
 };
 
-const getLightDensities = (response, lightCounts) => {
+const getDensitiesDistances = (response, lightCounts) => {
   //get best route based on light density along route (light count / distance)
   // let bestRouteIndex = 0;
   // let bestLightDensity = 0;
@@ -124,6 +124,15 @@ const getLightDensities = (response, lightCounts) => {
   return [lightDensities, distances];
 }
 
+const getOptimalRouteIndex = (densities, distances) => {
+  let mostLighted = densities.indexOf(Math.max(...densities));
+  let shortest = distances.indexOf(Math.min(...distances));
+  if(mostLighted === shortest) {
+    return [shortest];
+  }
+  return [mostLighted, shortest];
+}
+
  // @constructor
 
 function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay) {
@@ -132,9 +141,10 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   this.originPlaceId = null;
   this.destinationPlaceId = null;
   this.travelMode = 'WALKING';
+  this.preference = 'LIGHTING';
   var originInput = document.getElementById('origin-input');
   var destinationInput = document.getElementById('destination-input');
-  var modeSelector = document.getElementById('mode-selector');
+  var preferenceSelector = document.getElementById('preference');
   this.directionsService = directionsService;
   this.directionsDisplay = directionsDisplay;
   this.directionsDisplay.setMap(map);
@@ -144,8 +154,8 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   var destinationAutocomplete = new google.maps.places.Autocomplete(
      destinationInput, {placeIdOnly: true});
 
-  this.setupClickListener('changemode-walking', 'WALKING');
-  // this.setupClickListener('changemode-transit', 'TRANSIT');
+  this.setupClickListener('changepreference-lighting', 'LIGHTING');
+  this.setupClickListener('changepreference-shortest', 'SHORTEST');
   // this.setupClickListener('changemode-driving', 'DRIVING');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
@@ -153,16 +163,17 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
 
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
-  this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+  this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(preferenceSelector);
 }
 
 // Sets a listener on a radio button to change the filter type on Places
 // Autocomplete.
-AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode) {
+AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, preference) {
  var radioButton = document.getElementById(id);
  var me = this;
  radioButton.addEventListener('click', function() {
-   me.travelMode = mode;
+   //enables radio button to change the optimization preferences
+   me.preference = preference;
    me.route();
  });
 };
@@ -210,7 +221,9 @@ AutocompleteDirectionsHandler.prototype.route = function() {
          let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
 
          //lightDensities is an indexed dictionary containing densities and length of routes
-         let lightDensities = getLightDensities(response, lightCounts);
+         let densitiesDistances = getDensitiesDistances(response, lightCounts);
+
+         optimizeRoute(...densitiesDistances);
 
          let shortestRoute;
        }

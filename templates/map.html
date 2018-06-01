@@ -82,13 +82,13 @@
 <input id="destination-input" class="controls" type="text"
     placeholder="Enter a destination location">
 
-<div id="mode-selector" class="controls">
-  <input type="radio" name="type" id="changemode-walking" checked="checked">
-  <label for="changemode-walking">Walking</label>
+<div id="preference" class="controls">
+  <input type="radio" name="type" id="changepreference-lighting" checked="checked">
+  <label for="changepreference-lighting">Best Lighting</label>
 
-  <!-- <input type="radio" name="type" id="changemode-transit">
-  <label for="changemode-transit">Transit</label>
-
+  <input type="radio" name="type" id="changepreference-shortest">
+  <label for="changepreference-shortest">Shortest</label>
+<!--
   <input type="radio" name="type" id="changemode-driving">
   <label for="changemode-driving">Driving</label> -->
 </div>
@@ -112,7 +112,7 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/denissellu/routeboxer/master/src/RouteBoxer.js"></script>
-    <script type="text/javascript" src="../static/js/app.js"></script>
+    <script type="text/javascript" src="../static/js/map.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=places,geometry&callback=initMap"></script>
   </body>
 
