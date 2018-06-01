@@ -28,17 +28,17 @@ def index():
 def register_form():
     """Show form for user signup."""
 
-    return render_template("register_form.html")
+    return render_template("register.html")
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/registerUser', methods=['POST'])
 def register_process():
     """Process registration."""
 
     # Get form variables
-    email = request.form["email"]
+    username = request.form["username"]
     password = request.form["password"]
-
+    return json.dumps({'status':'OK','username':username,'pass':password});
     new_user = User(username=username, password=password)
 
     db.session.add(new_user)
@@ -67,21 +67,21 @@ def login_process():
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-    # return json.dumps({'status':'OK','username':username,'pass':password});
-    user = User.query.filter_by(username=username).first()
+    return json.dumps({'status':'OK','username':username,'pass':password});
+    # user = User.query.filter_by(username=username).first()
 
-    if not username:
-        return redirect("/login")
-
-
-    if user.password != password:
-        flash("Incorrect password")
-        return redirect("/login")
-
-    session["user_id"] = user.user_id
-
-    flash("Logged in")
-    return redirect("/users/{}".format(user.user_id))
+    # if not username:
+    #     return redirect("/login")
+    #
+    #
+    # if user.password != password:
+    #     flash("Incorrect password")
+    #     return redirect("/login")
+    #
+    # session["user_id"] = user.user_id
+    #
+    # flash("Logged in")
+    # return redirect("/users/{}".format(user.user_id))
 
 
 @app.route('/logout')

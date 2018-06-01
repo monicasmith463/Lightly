@@ -43,8 +43,7 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(
-                            PasswordType(
+    password = db.Column(PasswordType(
                                 # The returned dictionary is forwarded to the CryptContext
                                 onload=lambda **kwargs: dict(
                                     schemes=['pbkdf2_sha512', 'md5_crypt'],

@@ -50,17 +50,16 @@ def load_light_data(filename):
     # Commit at the end
     db.session.commit()
 
-def load_user_data():
+def load_user_data(num_fake_users=100):
     """Load fake user data to seed database."""
     #characters for generating passwords
     chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789"
     #load 200 users
-    for i in range(1):
+    for i in range(num_fake_users):
         username = fake.name()
         password = ''.join(map(lambda x: random.choice(chars), range(random.randint(6, 10))))
         print "password: ", password
         user = User(username=username, password=password)
-        print user
         db.session.add(user)
     db.session.commit()
 
@@ -69,9 +68,10 @@ if __name__ == "__main__":
     db.create_all()
 
     data_filename = "seed_data/Boise_Streetlights.json"
+    num_fake_users = 200
 
     load_light_data(data_filename)
-    # load_user_data()
+    load_user_data(num_fake_users)
     # set_val_user_id()
 
 # load_light_data("seed_data/Boise_Streetlights.json")

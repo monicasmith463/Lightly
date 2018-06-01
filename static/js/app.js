@@ -27,7 +27,7 @@ function initMap() {
     });
 
     //set light markers on map
-    const mapLights = (coords) => {
+    const mapLights = coords => {
       console.log("working", coords);
       coords.forEach( coord => {
         console.log("working again", coord);
@@ -102,20 +102,26 @@ const searchAreas = (boxedRoutes, coordinates) => {
   return lightCounts;
 };
 
-const getBestRoute = (response, lightCounts) => {
+const getLightDensities = (response, lightCounts) => {
   //get best route based on light density along route (light count / distance)
-  let bestRouteIndex = 0;
-  let bestLightDensity = 0;
+  // let bestRouteIndex = 0;
+  // let bestLightDensity = 0;
+  let lightDensities = [];
+  let distances = [];
   for(let i=0; i<response.routes.length; i++) {
     let distance = response.routes[i].legs[0].distance.value;
     let lightDensity = lightCounts[i]/distance;
-    if(bestLightDensity < lightDensity) {
-      bestRouteIndex = i;
-      bestLightDensity = lightDensity;
-    }
+
+    lightDensities.push(lightDensity);
+    distances.push(distance);
+    //
+    // if(bestLightDensity < lightDensity) {
+    //   bestRouteIndex = i;
+    //   bestLightDensity = lightDensity;
+    // }
   }
-  console.log("optimized!!!!");
-  return bestRouteIndex;
+  console.log("lightDensities", JSON.stringify(lightDensities));
+  return [lightDensities, distances];
 }
 
  // @constructor
@@ -199,10 +205,17 @@ AutocompleteDirectionsHandler.prototype.route = function() {
         //if only one route is returned default to route index 0
        let bestRouteIndex = 0;
        //else, perform route optimization based on light positions
+      //if more than one route is possible, optimize:
        if(response.routes.length > 1) {
          let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
-         bestRouteIndex = getBestRoute(response, lightCounts);
+
+         //lightDensities is an indexed dictionary containing densities and length of routes
+         let lightDensities = getLightDensities(response, lightCounts);
+
+         let shortestRoute;
        }
+
+
        var route = new google.maps.DirectionsRenderer({
          map: me.map,
          directions: response,

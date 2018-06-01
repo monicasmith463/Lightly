@@ -16,7 +16,7 @@ class toggleLights extends React.Component {
         this.clearMarkers = this.clearMarkers.bind(this);
     }
 
-    roll() {
+    clearMarkers() {
         var num = Math.ceil(
             Math.random() * this.props.sides);
         this.setState({result: num});
