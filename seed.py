@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
     data_filename = "seed_data/Boise_Streetlights.json"
 
-    # load_light_data(data_filename)
-    load_user_data()
+    load_light_data(data_filename)
+    # load_user_data()
     # set_val_user_id()
 
 # load_light_data("seed_data/Boise_Streetlights.json")

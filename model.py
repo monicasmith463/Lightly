@@ -73,7 +73,6 @@ def connect_to_db(app):
     #configure password encryption. Set encryption schemes:
     db.app = app
     db.init_app(app)
-    # app.config['PASSWORD_SCHEMES'] =
 
 
 

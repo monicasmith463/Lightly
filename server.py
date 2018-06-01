@@ -2,6 +2,7 @@
 
 from jinja2 import StrictUndefined
 
+import json
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -59,19 +60,19 @@ def login_form():
     return render_template("login.html")
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/loginUser', methods=['POST'])
 def login_process():
     """Process login."""
 
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-
+    # return json.dumps({'status':'OK','username':username,'pass':password});
     user = User.query.filter_by(username=username).first()
 
-    if not user:
-        flash("No such user")
+    if not username:
         return redirect("/login")
+
 
     if user.password != password:
         flash("Incorrect password")

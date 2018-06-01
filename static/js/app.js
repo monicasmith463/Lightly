@@ -14,6 +14,7 @@ function initMap() {
                                )
   //set up map
   promise.then( response => {
+    console.log("coordinates", coordinates);
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
@@ -27,15 +28,17 @@ function initMap() {
 
     //set light markers on map
     const mapLights = (coords) => {
+      console.log("working", coords);
       coords.forEach( coord => {
+        console.log("working again", coord);
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
           map: map
         });
         marker.setMap(map);
+        console.log("mapped", marker)
       })
     };
-
     mapLights(coordinates);
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
@@ -136,8 +139,8 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
      destinationInput, {placeIdOnly: true});
 
   this.setupClickListener('changemode-walking', 'WALKING');
-  this.setupClickListener('changemode-transit', 'TRANSIT');
-  this.setupClickListener('changemode-driving', 'DRIVING');
+  // this.setupClickListener('changemode-transit', 'TRANSIT');
+  // this.setupClickListener('changemode-driving', 'DRIVING');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
