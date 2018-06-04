@@ -14,7 +14,7 @@ class Login extends React.Component {
   }
 
   validateForm() {
-    return (this.state.username.length > 0) && (this.state.password.length > 0);
+    return !!(this.state.username.length && this.state.password.length);
   }
 
 //handleChange sets username and password of the login object to the value
@@ -28,7 +28,7 @@ class Login extends React.Component {
     let username = $('#username').val();
     let password = $('#password').val();
     $.ajax({
-        url: '/loginUser',
+        url: '/login',
         data: $('form').serialize(),
         type: 'POST',
         success: function(response) {
@@ -53,7 +53,7 @@ class Login extends React.Component {
 
         <div className="form-group">
           <label>Password:
-              <input id="password" type="password" name="password" onChange={this.handleChange} required className="form-control"></input>
+              <input id="password" type="password" name="password" onChange={this.handleChange} required className="form-control" maxLength="12"></input>
           </label>
         </div>
 

@@ -7,14 +7,21 @@ class Register extends React.Component {
     super(props);
 
     this.state = {
-      usernamereg: "",
-      passwordreg: ""
+      username: "",
+      password: "",
+      email: "",
+      zipcode: ""
     };
   }
 
 //validate form detects the length of the username and password to enable/disable submit button
-  validateForm() {
-    return (this.state.usernamereg.length > 0) && (this.state.passwordreg.length > 0);
+  disableForm() {
+    for(var key in this.state) {
+      if(!this.state[key]) {
+        return true;
+      }
+    }
+    return false;
   }
 
 //handleChange sets username and password of the login object to the value
@@ -24,19 +31,18 @@ class Register extends React.Component {
     });
   }
 
-  // validateSubmission = () => {
-  //   //look up username to see if in database already using AJAX
-  //   let promise =
-  //   return return (this.state.usernamereg.length > 0) && (this.state.passwordreg.length > 0);
-  // }
+  validateSubmission = () => {
+    //look up username to see if in database already using AJAX
+    return !!(this.state.username.length && this.state.password.length);
+  }
 
   handleSubmit = event => {
-    // let username = $('#usernamereg').val();
-    // let password = $('#passwordreg').val();
-    let username = this.state.usernamereg;
-    let password = this.state.passwordreg;
-    // console.log('username, password', username, password);
-    if validateSubmission(username, password) {
+    // let username = $('#username').val();
+    // let password = $('#password').val();
+    let username = this.state.username;
+    let password = this.state.password;
+    console.log('username, password', username, password);
+    if(validateSubmission()) {
       $.ajax({
           url: '/registerUser',
           data: $('form').serialize(),
@@ -59,19 +65,31 @@ class Register extends React.Component {
       <form onSubmit={this.handleSubmit}>
 
         <div className="form-group">
-          <label>Username:
-              <input id="usernamereg" type="username" name="username" onChange={this.handleChange} required className="form-control"></input>
+          <label>Username
+              <input id="username" type="username" name="username" onChange={this.handleChange} required className="form-control"></input>
           </label>
         </div>
 
         <div className="form-group">
-          <label>Password:
-              <input id="passwordreg" type="password" name="password" onChange={this.handleChange} required className="form-control"></input>
+          <label>Password
+              <input id="password" type="password" name="password" onChange={this.handleChange} required className="form-control" maxLength="12"></input>
           </label>
         </div>
 
         <div className="form-group">
-          <input type="submit" value="Register" disabled={!this.validateForm()} className="btn"></input>
+          <label>Email
+              <input id="email" type="email" name="email" onChange={this.handleChange} required className="form-control"></input>
+          </label>
+        </div>
+
+        <div className="form-group">
+          <label>Zipcode
+              <input id="zipcode" type="zipcode" name="zipcode" onChange={this.handleChange} required className="form-control"></input>
+          </label>
+        </div>
+
+        <div className="form-group">
+          <input type="submit" value="Register" disabled={this.disableForm()} className="btn"></input>
         </div>
 
       </form>
@@ -104,7 +122,7 @@ class Register extends React.Component {
       //     <Button
       //       block
       //       bsSize="large"
-      //       disabled={!this.validateForm()}
+      //       disabled={!this.disableForm()}
       //       type="submit"
       //     >
       //       Login

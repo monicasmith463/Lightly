@@ -6,7 +6,7 @@ import json
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Light
+from model import connect_to_db, db, Light, User
 
 
 app = Flask(__name__)
@@ -60,27 +60,34 @@ def login_form():
     return render_template("login.html")
 
 
-@app.route('/loginUser', methods=['POST'])
-def login_process():
-    """Process login."""
+@app.route('/login', methods=['POST'])
+
+def get_login_info():
+    """Get login info from form."""
 
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
+    process_login(username, password)
     return json.dumps({'status':'OK','username':username,'pass':password});
-    # user = User.query.filter_by(username=username).first()
 
-    # if not username:
-    #     return redirect("/login")
-    #
-    #
+def process_login(username, password):
+    """process_login"""
+    user = User.query.filter_by(username=username).first()
+
+
+    if not username:
+        flash("working")
+        return redirect("/login")
+
+
     # if user.password != password:
     #     flash("Incorrect password")
     #     return redirect("/login")
     #
     # session["user_id"] = user.user_id
-    #
-    # flash("Logged in")
+
+    flash("Logged in")
     # return redirect("/users/{}".format(user.user_id))
 
 

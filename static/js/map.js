@@ -28,9 +28,7 @@ function initMap() {
 
     //set light markers on map
     const mapLights = coords => {
-      console.log("working", coords);
       coords.forEach( coord => {
-        console.log("working again", coord);
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
           map: map
@@ -133,7 +131,19 @@ const getOptimalRouteIndex = (densities, distances) => {
   return [mostLighted, shortest];
 }
 
+const optimizeByLightDensity = (response, me.routeBoxer, coordinates) => {
+  let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
+
+  //lightDensities is an indexed dictionary containing densities and length of routes
+  let densitiesDistances = getDensitiesDistances(response, lightCounts);
+
+  // optimizeRoute(...densitiesDistances);
+
+  let shortestRoute;
+}
+
  // @constructor
+ //source: https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-directions
 
 function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay) {
   this.map = map;
@@ -217,22 +227,37 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        let bestRouteIndex = 0;
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
-       if(response.routes.length > 1) {
-         let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
+       if(me.preference === "LIGHTING") {
+         if(response.routes.length > 1) {
+           bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer, coordinates);
+           // let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
+           //
+           // //lightDensities is an indexed dictionary containing densities and length of routes
+           // let densitiesDistances = getDensitiesDistances(response, lightCounts);
+           //
+           // // optimizeRoute(...densitiesDistances);
+           //
+           // let shortestRoute;
+         }
 
-         //lightDensities is an indexed dictionary containing densities and length of routes
-         let densitiesDistances = getDensitiesDistances(response, lightCounts);
-
-         optimizeRoute(...densitiesDistances);
-
-         let shortestRoute;
        }
 
+
+       // var route = new google.maps.DirectionsRenderer({
+       //   map: me.map,
+       //   directions: response,
+       //   routeIndex: bestRouteIndex
+       // });
 
        var route = new google.maps.DirectionsRenderer({
          map: me.map,
          directions: response,
-         routeIndex: bestRouteIndex
+         routeIndex: 0
+       });
+       var route = new google.maps.DirectionsRenderer({
+         map: me.map,
+         directions: response,
+         routeIndex: 1
        });
      } else {
        window.alert('Directions request failed due to ' + status);
