@@ -24,26 +24,30 @@ class Login extends React.Component {
     });
   }
 
-  handleSubmit = event => {
-    let username = $('#username').val();
-    let password = $('#password').val();
-    $.ajax({
-        url: '/login',
-        data: $('form').serialize(),
-        type: 'POST',
-        success: function(response) {
-            console.log(response);
-        },
-        error: function(error) {
-            console.log(error);
-        }
-    });
-    event.preventDefault();
-  }
+  // handleSubmit = event => {
+  //   let username = $('#username').val();
+  //   let password = $('#password').val();
+  //   $.ajax({
+  //       url: '/login',
+  //       data: $('form').serialize(),
+  //       type: 'POST',
+  //       success: function(response) {
+  //           console.log(response);
+  //           window.location.href = "/";
+  //       },
+  //
+  //
+  //
+  //       error: function(error) {
+  //           console.log(error);
+  //       }
+  //   });
+  //   event.preventDefault();
+  // }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form action="/login" method="POST">
 
         <div className="form-group">
           <label>Username:

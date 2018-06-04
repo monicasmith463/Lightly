@@ -54,9 +54,17 @@ def map():
     return render_template("map.html")
 
 @app.route('/login', methods=['GET'])
-def login_form():
-    """Show login form."""
+def login():
+    """Show login form, process login request on successful post."""
 
+    # if request.method == 'POST':
+    #
+    #     username = request.form['username']
+    #     password = request.form['password']
+
+        # result = store_result_in_database(request.args)
+        # return redirect(url_for('success', result_id=result.id))
+        #
     return render_template("login.html")
 
 
@@ -68,22 +76,22 @@ def get_login_info():
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-    process_login(username, password)
-    return json.dumps({'status':'OK','username':username,'pass':password});
+    # process_login(username, password)
+    # return json.dumps({'status':'OK','username':username,'pass':password});
 
-def process_login(username, password):
-    """process_login"""
+# def process_login(username, password):
+#     """process_login"""
     user = User.query.filter_by(username=username).first()
-
-
-    if not username:
-        flash("working")
-        return redirect("/login")
+#
+#
+    if not user:
+        flash("working", user)
+        return redirect("/")
 
 
     # if user.password != password:
     #     flash("Incorrect password")
-    #     return redirect("/login")
+    # return redirect("/login")
     #
     # session["user_id"] = user.user_id
 

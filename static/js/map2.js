@@ -1,5 +1,6 @@
 var coordinates;
 var markers;
+var routeboxer = new RouteBoxer();
 
 const distance = 0.01; // distance from route for box converage in km.
 
@@ -14,7 +15,6 @@ function initMap() {
                                )
   //set up map
   promise.then( response => {
-    console.log("coordinates", coordinates);
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
@@ -37,18 +37,7 @@ function initMap() {
         console.log("mapped", marker)
       })
     };
-
-    google.maps.event.addListener(map, 'zoom_changed', function(event) {
-      //markers are very dense to look at so only display when the view is zoomed
-      if(map.zoom > 17) {
-        mapLights(coordinates);
-      }
-      // else {
-      //   label.setMap(null);
-      // }
-    });
-
-    // mapLights(coordinates);
+    mapLights(coordinates);
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
 
@@ -57,20 +46,20 @@ function initMap() {
   })
 };
 
-const getLightCounts = (response, routeBoxer) => {
+const getLightCounts = response => {
   //iterate over API response routes and box them
   //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
-  let boxedRoutes = boxRoutes(response, routeBoxer);
-  return searchAreas(boxedRoutes, coordinates);
+  let boxedRoutes = boxRoutes(response);
+  return searchAreas(boxedRoutes);
 }
 
-const boxRoutes = (response, routeBoxer) => {
+const boxRoutes = response => {
   //iterate over API response routes and box them
   let boxedRoutes = [];
   response.routes.forEach( route => {
     let path = route.overview_path;
     //routeBoxer returns an array of four tuples, the bounds of a rectangle
-    let boxes = routeBoxer.box(path, distance);
+    let boxes = routeboxer.box(path, distance);
     let boxpolys = [];
     boxes.forEach( box => {
       let newBox = new google.maps.Rectangle({
@@ -110,37 +99,6 @@ const searchAreas = (boxedRoutes, coordinates) => {
   //return the number of lights along each route
   return lightCounts;
 };
-
-// const getDensitiesDistances = (response, lightCounts) => {
-//   //get best route based on light density along route (light count / distance)
-//   // let bestRouteIndex = 0;
-//   // let bestLightDensity = 0;
-//   let lightDensities = [];
-//   let distances = [];
-//   for(let i=0; i<response.routes.length; i++) {
-//     let distance = response.routes[i].legs[0].distance.value;
-//     let lightDensity = lightCounts[i]/distance;
-//
-//     lightDensities.push(lightDensity);
-//     distances.push(distance);
-//     //
-//     // if(bestLightDensity < lightDensity) {
-//     //   bestRouteIndex = i;
-//     //   bestLightDensity = lightDensity;
-//     // }
-//   }
-//   console.log("lightDensities", JSON.stringify(lightDensities));
-//   return [lightDensities, distances];
-// }
-//
-// const getOptimalRouteIndex = (densities, distances) => {
-//   let mostLighted = densities.indexOf(Math.max(...densities));
-//   let shortest = distances.indexOf(Math.min(...distances));
-//   if(mostLighted === shortest) {
-//     return [shortest];
-//   }
-//   return [mostLighted, shortest];
-// }
 
 const getDensitiesDistances = (response, lightCounts) => {
   //get best route based on light density along route (light count / distance)
@@ -184,11 +142,12 @@ const optimizeByLightDensity = response => {
   let shortestRoute;
 }
 
+//source: https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-directions
  // @constructor
 
 function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay) {
   this.map = map;
-  this.routeBoxer = new RouteBoxer();
+  // this.routeBoxer = new RouteBoxer();
   this.originPlaceId = null;
   this.destinationPlaceId = null;
   this.travelMode = 'WALKING';
@@ -225,70 +184,84 @@ AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, prefer
  radioButton.addEventListener('click', function() {
    //enables radio button to change the optimization preferences
    me.preference = preference;
-   me.route();
+   // me.route();
  });
 };
 
-AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
- var me = this;
- autocomplete.bindTo('bounds', this.map);
- autocomplete.addListener('place_changed', function() {
-   var place = autocomplete.getPlace();
-   if (!place.place_id) {
-     window.alert("Please select an option from the dropdown list.");
-     return;
-   }
-   if (mode === 'ORIG') {
-     me.originPlaceId = place.place_id;
-   } else {
-     me.destinationPlaceId = place.place_id;
-   }
-   me.route();
- });
-
-};
-
-AutocompleteDirectionsHandler.prototype.route = function() {
- if (!this.originPlaceId || !this.destinationPlaceId) {
-   return;
- }
- var me = this;
-
-
- this.directionsService.route({
-   origin: {'placeId': this.originPlaceId},
-   destination: {'placeId': this.destinationPlaceId},
-   travelMode: this.travelMode,
-   provideRouteAlternatives: true
- },
-
- function (response, status) {
-     if (status == google.maps.DirectionsStatus.OK) {
-        //if only one route is returned default to route index 0
-       let bestRouteIndex = 0;
-       //else, perform route optimization based on light positions
-      //if more than one route is possible, optimize:
-      if
-
-       if(response.routes.length > 1) {
-         let lightCounts = getLightCounts(response, me.routeBoxer);
-         //lightDensities is an indexed dictionary containing densities and length of routes
-         // let densitiesDistances = getDensitiesDistances(response, lightCounts);
-         //
-         // optimizeRoute(...densitiesDistances);
-
-         let shortestRoute;
-       }
-
-
-       var route = new google.maps.DirectionsRenderer({
-         map: me.map,
-         directions: response,
-         routeIndex: bestRouteIndex
-       });
-     } else {
-       window.alert('Directions request failed due to ' + status);
-     }
-   })
-
-};
+// AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+//  var me = this;
+//  autocomplete.bindTo('bounds', this.map);
+//  autocomplete.addListener('place_changed', function() {
+//    var place = autocomplete.getPlace();
+//    if (!place.place_id) {
+//      window.alert("Please select an option from the dropdown list.");
+//      return;
+//    }
+//    if (mode === 'ORIG') {
+//      me.originPlaceId = place.place_id;
+//    } else {
+//      me.destinationPlaceId = place.place_id;
+//    }
+//    me.route();
+//  });
+//
+// };
+//
+// AutocompleteDirectionsHandler.prototype.route = function() {
+//  if (!this.originPlaceId || !this.destinationPlaceId) {
+//    return;
+//  }
+//  var me = this;
+//
+//
+//  this.directionsService.route({
+//    origin: {'placeId': this.originPlaceId},
+//    destination: {'placeId': this.destinationPlaceId},
+//    travelMode: this.travelMode,
+//    provideRouteAlternatives: true
+//  },
+//
+//  function (response, status) {
+//      if (status == google.maps.DirectionsStatus.OK) {
+//         //if only one route is returned default to route index 0
+//        let bestRouteIndex = 0;
+//        //else, perform route optimization based on light positions
+//       //if more than one route is possible, optimize:
+//        if(me.preference === "LIGHTING") {
+//          if(response.routes.length > 1) {
+//            bestRouteIndex = optimizeByLightDensity(response);
+//            let lightCounts = getLightCounts(response, me.routeBoxer, coordinates);
+//
+//            //lightDensities is an indexed dictionary containing densities and length of routes
+//            let densitiesDistances = getDensitiesDistances(response, lightCounts);
+//
+//            // optimizeRoute(...densitiesDistances);
+//
+//            let shortestRoute;
+//          }
+//
+//        }
+//
+//
+//        // var route = new google.maps.DirectionsRenderer({
+//        //   map: me.map,
+//        //   directions: response,
+//        //   routeIndex: bestRouteIndex
+//        // });
+//
+//        var route = new google.maps.DirectionsRenderer({
+//          map: me.map,
+//          directions: response,
+//          routeIndex: 0
+//        });
+//        var route = new google.maps.DirectionsRenderer({
+//          map: me.map,
+//          directions: response,
+//          routeIndex: 1
+//        });
+//      } else {
+//        window.alert('Directions request failed due to ' + status);
+//      }
+//    })
+//
+// };

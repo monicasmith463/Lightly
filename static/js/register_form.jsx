@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +31,7 @@ class Register extends React.Component {
 
   validateSubmission = () => {
     //look up username to see if in database already using AJAX
-    return !!(this.state.username.length && this.state.password.length);
+    return (!this.state.username.length || !this.state.password.length);
   }
 
   handleSubmit = event => {
