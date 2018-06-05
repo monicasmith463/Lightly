@@ -40,7 +40,7 @@ function initMap() {
 
     google.maps.event.addListener(map, 'zoom_changed', function(event) {
       //markers are very dense to look at so only display when the view is zoomed
-      if(map.zoom > 17) {
+      if(map.zoom > 20) {
         mapLights(coordinates);
       }
       // else {
@@ -111,36 +111,36 @@ const searchAreas = (boxedRoutes, coordinates) => {
   return lightCounts;
 };
 
-// const getDensitiesDistances = (response, lightCounts) => {
-//   //get best route based on light density along route (light count / distance)
-//   // let bestRouteIndex = 0;
-//   // let bestLightDensity = 0;
-//   let lightDensities = [];
-//   let distances = [];
-//   for(let i=0; i<response.routes.length; i++) {
-//     let distance = response.routes[i].legs[0].distance.value;
-//     let lightDensity = lightCounts[i]/distance;
-//
-//     lightDensities.push(lightDensity);
-//     distances.push(distance);
-//     //
-//     // if(bestLightDensity < lightDensity) {
-//     //   bestRouteIndex = i;
-//     //   bestLightDensity = lightDensity;
-//     // }
-//   }
-//   console.log("lightDensities", JSON.stringify(lightDensities));
-//   return [lightDensities, distances];
-// }
-//
-// const getOptimalRouteIndex = (densities, distances) => {
-//   let mostLighted = densities.indexOf(Math.max(...densities));
-//   let shortest = distances.indexOf(Math.min(...distances));
-//   if(mostLighted === shortest) {
-//     return [shortest];
-//   }
-//   return [mostLighted, shortest];
-// }
+const getDensitiesDistances = (response, lightCounts) => {
+  //get best route based on light density along route (light count / distance)
+  // let bestRouteIndex = 0;
+  // let bestLightDensity = 0;
+  let lightDensities = [];
+  let distances = [];
+  for(let i=0; i<response.routes.length; i++) {
+    let distance = response.routes[i].legs[0].distance.value;
+    let lightDensity = lightCounts[i]/distance;
+
+    lightDensities.push(lightDensity);
+    distances.push(distance);
+    //
+    // if(bestLightDensity < lightDensity) {
+    //   bestRouteIndex = i;
+    //   bestLightDensity = lightDensity;
+    // }
+  }
+  console.log("lightDensities", JSON.stringify(lightDensities));
+  return [lightDensities, distances];
+}
+
+const getOptimalRouteIndex = (densities, distances) => {
+  let mostLighted = densities.indexOf(Math.max(...densities));
+  let shortest = distances.indexOf(Math.min(...distances));
+  if(mostLighted === shortest) {
+    return [shortest];
+  }
+  return [mostLighted, shortest];
+}
 
 const getDensitiesDistances = (response, lightCounts) => {
   //get best route based on light density along route (light count / distance)
@@ -268,19 +268,24 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        let bestRouteIndex = 0;
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
-      if
+      if(me.preference === "LIGHTING"){
+        // console.log('show modal');
+        // $('#exampleModal').modal('show');
+         if(response.routes.length > 1) {
+           bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
+           // let lightCounts = getLightCounts(response, me.routeBoxer);
+           //lightDensities is an indexed dictionary containing densities and length of routes
+           // let densitiesDistances = getDensitiesDistances(response, lightCounts);
+           //
+           // optimizeRoute(...densitiesDistances);
 
-       if(response.routes.length > 1) {
-         let lightCounts = getLightCounts(response, me.routeBoxer);
-         //lightDensities is an indexed dictionary containing densities and length of routes
-         // let densitiesDistances = getDensitiesDistances(response, lightCounts);
-         //
-         // optimizeRoute(...densitiesDistances);
+           // let shortestRoute;
+         } else {
+         //   //if only one route and user preference is lighting, unable to optimize
+         }
+      }
 
-         let shortestRoute;
-       }
-
-
+    //if preference is shortest, just default to index 0
        var route = new google.maps.DirectionsRenderer({
          map: me.map,
          directions: response,
