@@ -314,8 +314,11 @@ AutocompleteDirectionsHandler.prototype.route = function() {
              densities.push(lightCounts[i]/distances[i]);
            }
 
-           for(let i = 0; i < distances.length; i++) {
-             if()
+           let bestLit = densities.indexOf(Math.max(...densities));
+
+           if(bestLit === 0) {
+             //if best list is also the shortest, display modal for when route is both optimized and shortest
+
            }
 
            bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];

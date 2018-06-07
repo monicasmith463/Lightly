@@ -38,7 +38,7 @@ def register_process():
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-    confirm_password = request.form["confirm"]
+    confirm = request.form["confirm"]
     email = request.form["email"]
     zipcode = request.form["zipcode"]
     # return json.dumps({'status':'OK','username':username,'pass':password});
@@ -47,6 +47,10 @@ def register_process():
 
     if check_new_user:
         flash("Username already exists.")
+        return redirect("/register")
+
+    if confirm != password:
+        flash("Please confirm password.")
         return redirect("/register")
 
     # create new user

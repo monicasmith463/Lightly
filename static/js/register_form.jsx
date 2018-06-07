@@ -14,9 +14,9 @@ class Register extends React.Component {
   }
 
 //validate form detects the length of the username and password to enable/disable submit button
-  disableForm() {
-    for(var key in this.state) {
-      if(!this.state[key]) {
+  disableForm = () => {
+    for(var field in this.state) {
+      if(!this.state[field]) {
         return true;
       }
     }
@@ -35,6 +35,19 @@ class Register extends React.Component {
     return (!this.state.username.length || !this.state.password.length);
   }
 
+  // validatePassword = () => {
+  //     if(this.state.confirm.length && (this.state.confirm !== this.state.password)) {
+  //       return "Confirm password does not match"
+  //     } else {
+  //
+  //     }
+  //     // if (input.value != document.getElementById('password').value) {
+  //     //     input.setCustomValidity('Password Must be Matching.');
+  //     // } else {
+  //     //     // input is valid -- reset the error message
+  //     //     input.setCustomValidity('');
+  //     // }
+  // }
   // handleSubmit = event => {
   //   // let username = $('#username').val();
   //   // let password = $('#password').val();
@@ -135,44 +148,6 @@ class Register extends React.Component {
     				</div>
     			</div>
     		</div>
-
-
-    							// <button type="button" disabled={this.disableForm()} className=>Register</button>
-
-
-
-      // <form action="/register" method="POST">
-      //
-      //   <div className="form-group">
-      //     <label>Username
-      //         <input id="username" type="username" name="username" onChange={this.handleChange} required className="form-control"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <label>Password
-      //         <input id="password" type="password" name="password" onChange={this.handleChange} required className="form-control" maxLength="12"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <label>Email
-      //         <input id="email" type="email" name="email" onChange={this.handleChange} required className="form-control"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <label>Zipcode
-      //         <input id="zipcode" type="zipcode" name="zipcode" onChange={this.handleChange} required className="form-control"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <input type="submit" value="Register" disabled={this.disableForm()} className="btn"></input>
-      //   </div>
-      //
-      // </form>
-
     );
   }
 }
