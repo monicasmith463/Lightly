@@ -31,21 +31,37 @@ def register_form():
     return render_template("register.html")
 
 
-@app.route('/registerUser', methods=['POST'])
+@app.route('/register', methods=['POST'])
 def register_process():
     """Process registration."""
 
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-    return json.dumps({'status':'OK','username':username,'pass':password});
-    new_user = User(username=username, password=password)
+    confirm_password = request.form["confirm"]
+    email = request.form["email"]
+    zipcode = request.form["zipcode"]
+    # return json.dumps({'status':'OK','username':username,'pass':password});
 
+    check_new_user = User.query.filter_by(username=username).first()
+
+    if check_new_user:
+        flash("Username already exists.")
+        return redirect("/register")
+
+    # create new user
+    new_user = User(username=username, password=password, email=email, zipcode=zipcode)
+
+    # add new user to database
     db.session.add(new_user)
     db.session.commit()
 
-    flash("User {} added.".format(email))
-    return redirect("/users/{}".format(new_user.user_id))
+    flash("User {} added.".format(username))
+
+    # automatically log user in
+    session["user_id"] = User.query.filter_by(username=username).first().user_id
+
+    return redirect("/")
 
 @app.route('/map')
 def map():
@@ -53,50 +69,37 @@ def map():
 
     return render_template("map.html")
 
+
 @app.route('/login', methods=['GET'])
 def login():
     """Show login form, process login request on successful post."""
 
-    # if request.method == 'POST':
-    #
-    #     username = request.form['username']
-    #     password = request.form['password']
-
-        # result = store_result_in_database(request.args)
-        # return redirect(url_for('success', result_id=result.id))
-        #
     return render_template("login.html")
 
 
 @app.route('/login', methods=['POST'])
-
-def get_login_info():
+def process_login():
     """Get login info from form."""
 
     # Get form variables
     username = request.form["username"]
     password = request.form["password"]
-    # process_login(username, password)
-    # return json.dumps({'status':'OK','username':username,'pass':password});
 
-# def process_login(username, password):
-#     """process_login"""
     user = User.query.filter_by(username=username).first()
-#
-#
+
     if not user:
-        flash("working", user)
+        flash("User does not exist.")
         return redirect("/")
 
 
-    # if user.password != password:
-    #     flash("Incorrect password")
-    # return redirect("/login")
-    #
-    # session["user_id"] = user.user_id
+    if user.password != password:
+        flash("Incorrect password")
+        return redirect("/login")
+
+    session["user_id"] = user.user_id
 
     flash("Logged in")
-    # return redirect("/users/{}".format(user.user_id))
+    return redirect("/map")
 
 
 @app.route('/logout')
@@ -107,16 +110,17 @@ def logout():
     flash("Logged Out.")
     return redirect("/")
 
-@app.route("/users/<int:user_id>")
+@app.route("/account/<int:user_id>")
 def user_detail(user_id):
     """Show info about user."""
 
-    user = User.query.options(db.joinedload('ratings').joinedload('movie')).get(user_id)
+    user = User.query.filter_by(user_id=user_id).first()
+    # user = User.query.options(db.joinedload('ratings').joinedload('movie')).get(user_id)
     return render_template("user.html", user=user)
 
-    session["user_id"] = user.user_id
-
-    flash("Logged in")
+    # session["user_id"] = user.user_id
+    #
+    # flash("Logged in")
 
 @app.route('/coordinate-data')
 def get_coordinates():
@@ -130,6 +134,7 @@ if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
     app.debug = True
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.jinja_env.auto_reload = app.debug
     connect_to_db(app)
 

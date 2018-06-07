@@ -1,5 +1,5 @@
 var coordinates;
-var markers;
+var markers = [];
 
 const distance = 0.01; // distance from route for box converage in km.
 
@@ -22,7 +22,7 @@ function initMap() {
     //create a new map object centered around Boise
     const map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
-      zoom: 10,
+      zoom: 13,
       center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
     });
 
@@ -34,18 +34,36 @@ function initMap() {
           map: map
         });
         marker.setMap(map);
+        marker.setVisible(false);
         console.log("mapped", marker)
+        markers.push(marker);
       })
     };
 
+    mapLights(coordinates);
+
+    const showLights = lights => {
+      console.log("show lights 1", lights);
+      lights.forEach( light => {
+        light.setVisible(true);
+      })
+    }
+
+    const hideLights = lights => {
+      lights.forEach( light => {
+        light.setVisible(false);
+      })
+    }
+
     google.maps.event.addListener(map, 'zoom_changed', function(event) {
       //markers are very dense to look at so only display when the view is zoomed
-      if(map.zoom > 20) {
-        mapLights(coordinates);
+
+      if(map.zoom > 10) {
+        console.log("zoom changed");
+        showLights(markers);
+      } else {
+        hideLights(markers);
       }
-      // else {
-      //   label.setMap(null);
-      // }
     });
 
     // mapLights(coordinates);
@@ -142,44 +160,46 @@ const getOptimalRouteIndex = (densities, distances) => {
   return [mostLighted, shortest];
 }
 
-const getDensitiesDistances = (response, lightCounts) => {
-  //get best route based on light density along route (light count / distance)
-  // let bestRouteIndex = 0;
-  // let bestLightDensity = 0;
-  let lightDensities = [];
-  let distances = [];
-  for(let i=0; i<response.routes.length; i++) {
-    let distance = response.routes[i].legs[0].distance.value;
-    let lightDensity = lightCounts[i]/distance;
+// const getDensitiesDistances = (response, lightCounts) => {
+//   //get best route based on light density along route (light count / distance)
+//   // let bestRouteIndex = 0;
+//   // let bestLightDensity = 0;
+//   let lightDensities = [];
+//   let distances = [];
+//   for(let i=0; i<response.routes.length; i++) {
+//     let distance = response.routes[i].legs[0].distance.value;
+//     let lightDensity = lightCounts[i]/distance;
+//
+//     lightDensities.push(lightDensity);
+//     distances.push(distance);
+//     //
+//     // if(bestLightDensity < lightDensity) {
+//     //   bestRouteIndex = i;
+//     //   bestLightDensity = lightDensity;
+//     // }
+//   }
+//   console.log("lightDensities", JSON.stringify(lightDensities));
+//   return [lightDensities, distances];
+// }
 
-    lightDensities.push(lightDensity);
-    distances.push(distance);
-    //
-    // if(bestLightDensity < lightDensity) {
-    //   bestRouteIndex = i;
-    //   bestLightDensity = lightDensity;
-    // }
-  }
-  console.log("lightDensities", JSON.stringify(lightDensities));
-  return [lightDensities, distances];
-}
-
-const getOptimalRouteIndex = (densities, distances) => {
-  let mostLighted = densities.indexOf(Math.max(...densities));
-  let shortest = distances.indexOf(Math.min(...distances));
-  if(mostLighted === shortest) {
-    return [shortest];
-  }
-  return [mostLighted, shortest];
-}
+// const getOptimalRouteIndex = (densities, distances) => {
+//   let mostLighted = densities.indexOf(Math.max(...densities));
+//   let shortest = distances.indexOf(Math.min(...distances));
+//   if(mostLighted === shortest) {
+//     return [shortest];
+//   }
+//   return [mostLighted, shortest];
+// }
 
 const optimizeByLightDensity = response => {
   let lightCounts = getLightCounts(response);
 
   //lightDensities is an indexed dictionary containing densities and length of routes
   let densitiesDistances = getDensitiesDistances(response, lightCounts);
+  console.log("densities distance:", densitiesDistances);
 
   // optimizeRoute(...densitiesDistances);
+  return
 
   let shortestRoute;
 }
@@ -189,6 +209,7 @@ const optimizeByLightDensity = response => {
 function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay) {
   this.map = map;
   this.routeBoxer = new RouteBoxer();
+  this.currentRoute = null;
   this.originPlaceId = null;
   this.destinationPlaceId = null;
   this.travelMode = 'WALKING';
@@ -243,6 +264,8 @@ AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(aut
    } else {
      me.destinationPlaceId = place.place_id;
    }
+   //clear old routes from map
+   // me.directionsDisplay.setMap(null);
    me.route();
  });
 
@@ -264,33 +287,44 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
  function (response, status) {
      if (status == google.maps.DirectionsStatus.OK) {
+
+       //if a route is already displayed, clear it
+       if(me.currentRoute) {
+         me.currentRoute.setMap(null);
+       }
+
         //if only one route is returned default to route index 0
        let bestRouteIndex = 0;
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
       if(me.preference === "LIGHTING"){
         // console.log('show modal');
-        // $('#exampleModal').modal('show');
+        sessionStorage.setItem('percentage', '30');
+        console.log("session", );
+        $('#exampleModal').modal('show');
          if(response.routes.length > 1) {
-           bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
-           // let lightCounts = getLightCounts(response, me.routeBoxer);
-           //lightDensities is an indexed dictionary containing densities and length of routes
-           // let densitiesDistances = getDensitiesDistances(response, lightCounts);
-           //
-           // optimizeRoute(...densitiesDistances);
+           // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
+           // if(bestRouteIndex === 0)
+           let lightCounts = getLightCounts(response, me.routeBoxer);
+           // lightDensities is an indexed dictionary containing densities and length of routes
+           let densitiesDistances = getDensitiesDistances(response, lightCounts);
+
+           bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];
+           console.log("index", bestRouteIndex);
 
            // let shortestRoute;
-         } else {
-         //   //if only one route and user preference is lighting, unable to optimize
+         // } else {
+         // //   //if only one route and user preference is lighting, unable to optimize
          }
       }
 
     //if preference is shortest, just default to index 0
-       var route = new google.maps.DirectionsRenderer({
+       me.currentRoute = new google.maps.DirectionsRenderer({
          map: me.map,
          directions: response,
          routeIndex: bestRouteIndex
        });
+
      } else {
        window.alert('Directions request failed due to ' + status);
      }

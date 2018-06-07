@@ -41,8 +41,14 @@ class User(db.Model):
 
     __tablename__ = "users"
 
+          # username: "",
+          # password: "",
+          # email: "",
+          # zipcode: ""
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    zipcode = db.Column(db.String(20), unique=False)
     password = db.Column(PasswordType(
                                 # The returned dictionary is forwarded to the CryptContext
                                 onload=lambda **kwargs: dict(
