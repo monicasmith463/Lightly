@@ -4,7 +4,7 @@
      /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
      #map {
-       height: 300px;
+       height: 600px;
      }
      /* Optional: Makes the sample page fill the window. */
      html, body {
@@ -96,10 +96,10 @@
         </button>
       </div>
       <div class="modal-body">
-        Your route has 50% better lighting.
+        Your route has <span id="modal-percentage"></span>% better lighting.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary">Show me the shortest route</button>
+        <button type="button" class="btn btn-secondary" onclick="$('#changepreference-shortest').prop('checked', true);" data-dismiss="modal">Show me the shortest route</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>

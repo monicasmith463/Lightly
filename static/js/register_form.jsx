@@ -78,7 +78,7 @@ class Register extends React.Component {
     							<label htmlFor="username" className="cols-sm-2 control-label">Username</label>
     							<div className="cols-sm-10">
     								<div className="input-group">
-    									<span className="input-group-addon"><i className="fa fa-users fa" aria-hidden="true"></i></span>
+    									<span className="input-group-addon"><i className="glyphicon glyphicon-user" aria-hidden="true"></i></span>
     									<input type="text" className="form-control" name="username" id="username" onChange={this.handleChange} placeholder="Enter your Username"/>
     								</div>
     							</div>
@@ -88,7 +88,7 @@ class Register extends React.Component {
     							<label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
     							<div className="cols-sm-10">
     								<div className="input-group">
-    									<span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
+    									<span className="input-group-addon"><i className="glyphicon glyphicon-envelope" aria-hidden="true"></i></span>
     									<input type="text" className="form-control" name="email" id="email"  onChange={this.handleChange} placeholder="Enter your Email"/>
     								</div>
     							</div>
@@ -98,7 +98,7 @@ class Register extends React.Component {
                   <label htmlFor="name" className="cols-sm-2 control-label">Your Zipcode</label>
                   <div className="cols-sm-10">
                     <div className="input-group">
-                      <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"></i></span>
+                      <span className="input-group-addon"><i className="glyphicon glyphicon-map-marker" aria-hidden="true"></i></span>
                       <input type="text" className="form-control" name="zipcode" id="zipcode" onChange={this.handleChange} placeholder="Enter your Zipcode"/>
                     </div>
                   </div>
@@ -108,7 +108,7 @@ class Register extends React.Component {
     							<label htmlFor="password" className="cols-sm-2 control-label">Password</label>
     							<div className="cols-sm-10">
     								<div className="input-group">
-    									<span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+    									<span className="input-group-addon"><i className="glyphicon glyphicon-lock" aria-hidden="true"></i></span>
     									<input type="password" className="form-control" name="password" id="password" onChange={this.handleChange} placeholder="Enter your Password"/>
     								</div>
     							</div>
@@ -118,7 +118,7 @@ class Register extends React.Component {
                   <label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
                   <div className="cols-sm-10">
                     <div className="input-group">
-                      <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                      <span className="input-group-addon"><i className="glyphicon glyphicon-lock" aria-hidden="true"></i></span>
                       <input type="password" className="form-control" name="confirm" id="confirm"  onChange={this.handleChange} placeholder="Confirm your Password"/>
                     </div>
                   </div>

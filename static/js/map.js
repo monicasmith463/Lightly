@@ -14,7 +14,6 @@ function initMap() {
                                )
   //set up map
   promise.then( response => {
-    console.log("coordinates", coordinates);
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
@@ -32,10 +31,10 @@ function initMap() {
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
           map: map
+
         });
         marker.setMap(map);
         marker.setVisible(false);
-        console.log("mapped", marker)
         markers.push(marker);
       })
     };
@@ -43,7 +42,6 @@ function initMap() {
     mapLights(coordinates);
 
     const showLights = lights => {
-      console.log("show lights 1", lights);
       lights.forEach( light => {
         light.setVisible(true);
       })
@@ -57,16 +55,14 @@ function initMap() {
 
     google.maps.event.addListener(map, 'zoom_changed', function(event) {
       //markers are very dense to look at so only display when the view is zoomed
-
-      if(map.zoom > 10) {
-        console.log("zoom changed");
+      console.log("zoom changed", map.zoom);
+      if(map.zoom > 17) {
+        console.log("zoom changed", map.zoom);
         showLights(markers);
       } else {
         hideLights(markers);
       }
     });
-
-    // mapLights(coordinates);
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
 
@@ -75,14 +71,14 @@ function initMap() {
   })
 };
 
-const getLightCounts = (response, routeBoxer) => {
+const getLightCounts = (response, routeBoxer, map) => {
   //iterate over API response routes and box them
   //boxRoutes returns the list of routes from the response, each item is [routeObject, [boxObjects]]
-  let boxedRoutes = boxRoutes(response, routeBoxer);
+  let boxedRoutes = boxRoutes(response, routeBoxer, map);
   return searchAreas(boxedRoutes, coordinates);
 }
 
-const boxRoutes = (response, routeBoxer) => {
+const boxRoutes = (response, routeBoxer, map) => {
   //iterate over API response routes and box them
   let boxedRoutes = [];
   response.routes.forEach( route => {
@@ -94,10 +90,11 @@ const boxRoutes = (response, routeBoxer) => {
       let newBox = new google.maps.Rectangle({
         bounds: box,
         fillOpacity: 0,
-        strokeOpacity: 1.0,
-        strokeColor: '#000000',
+        strokeOpacity: 0.0,
+        strokeColor: '#000001',
         strokeWeight: 1,
         map: map
+
       });
       boxpolys.push(newBox);
     });
@@ -106,18 +103,18 @@ const boxRoutes = (response, routeBoxer) => {
   return boxedRoutes;
 }
 
-const searchAreas = (boxedRoutes, coordinates) => {
+const searchAreas = boxedRoutes => {
   //search over routes and return light count for each as an array
   let lightCounts = [];
 
   boxedRoutes.forEach( boxedRoute => {
     let lightCount = 0;
     boxedRoute.forEach( box => {
-      coordinates.forEach( coordinate => {
+      markers.forEach( marker => {
         //position is a lat lng object representing each light
         //check if each position is within range of route
         //if so, increase light count
-        let position = new google.maps.LatLng(coordinate[0], coordinate[1]);
+        let position = marker.position;
         if(box && box.getBounds().contains(position)) {
           lightCount += 1;
         }
@@ -129,27 +126,28 @@ const searchAreas = (boxedRoutes, coordinates) => {
   return lightCounts;
 };
 
-const getDensitiesDistances = (response, lightCounts) => {
-  //get best route based on light density along route (light count / distance)
-  // let bestRouteIndex = 0;
-  // let bestLightDensity = 0;
-  let lightDensities = [];
-  let distances = [];
-  for(let i=0; i<response.routes.length; i++) {
-    let distance = response.routes[i].legs[0].distance.value;
-    let lightDensity = lightCounts[i]/distance;
+// const getDensitiesDistances = (response, lightCounts) => {
+//   //get best route based on light density along route (light count / distance)
+//   // let bestRouteIndex = 0;
+//   // let bestLightDensity = 0;
+//   let lightDensities = [];
+//   let distances = [];
+//   for(let i=0; i<response.routes.length; i++) {
+//     let distance = response.routes[i].legs[0].distance.value;
+//     let lightDensity = lightCounts[i]/distance;
+//
+//     lightDensities.push(lightDensity);
+//     distances.push(distance);
+//     //
+//     // if(bestLightDensity < lightDensity) {
+//     //   bestRouteIndex = i;
+//     //   bestLightDensity = lightDensity;
+//     // }
+//   }
+//   console.log("lightDensities", JSON.stringify(lightDensities));
+//   return [lightDensities, distances];
+// }
 
-    lightDensities.push(lightDensity);
-    distances.push(distance);
-    //
-    // if(bestLightDensity < lightDensity) {
-    //   bestRouteIndex = i;
-    //   bestLightDensity = lightDensity;
-    // }
-  }
-  console.log("lightDensities", JSON.stringify(lightDensities));
-  return [lightDensities, distances];
-}
 
 const getOptimalRouteIndex = (densities, distances) => {
   let mostLighted = densities.indexOf(Math.max(...densities));
@@ -183,8 +181,8 @@ const getOptimalRouteIndex = (densities, distances) => {
 // }
 
 // const getOptimalRouteIndex = (densities, distances) => {
-//   let mostLighted = densities.indexOf(Math.max(...densities));
-//   let shortest = distances.indexOf(Math.min(...distances));
+  let mostLighted = densities.indexOf(Math.max(...densities));
+  let shortest = distances.indexOf(Math.min(...distances));
 //   if(mostLighted === shortest) {
 //     return [shortest];
 //   }
@@ -298,16 +296,27 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
       if(me.preference === "LIGHTING"){
-        // console.log('show modal');
-        sessionStorage.setItem('percentage', '30');
-        console.log("session", );
-        $('#exampleModal').modal('show');
+        $('#modal-percentage').text('194358940325890438');
+        $('#modal-lighting-optimized').modal('show');
+        // $('#').prop();
          if(response.routes.length > 1) {
            // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
            // if(bestRouteIndex === 0)
-           let lightCounts = getLightCounts(response, me.routeBoxer);
+           let lightCounts = getLightCounts(response, me.routeBoxer, me.map);
            // lightDensities is an indexed dictionary containing densities and length of routes
-           let densitiesDistances = getDensitiesDistances(response, lightCounts);
+           let distances = response.routes.map(route => route.legs[0].distance.value);
+
+           let durations = response.routes.map(route => route.legs[0].duration.value);
+
+           let densities = [];
+
+           for(let i=0; i < lightCounts.length; i++) {
+             densities.push(lightCounts[i]/distances[i]);
+           }
+
+           for(let i = 0; i < distances.length; i++) {
+             if()
+           }
 
            bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];
            console.log("index", bestRouteIndex);
