@@ -22,7 +22,168 @@ function initMap() {
     const map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
       zoom: 13,
-      center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
+      center:  {lat: 43.61295367682718, lng: -116.19129651919633 },
+      styles: [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#263c3f"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6b9a76"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#38414e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#212a37"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9ca5b3"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#1f2835"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#f3d19c"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2f3948"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#515c6d"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  }
+]
     });
 
     //set light markers on map
@@ -149,14 +310,14 @@ const searchAreas = boxedRoutes => {
 // }
 
 
-const getOptimalRouteIndex = (densities, distances) => {
-  let mostLighted = densities.indexOf(Math.max(...densities));
-  let shortest = distances.indexOf(Math.min(...distances));
-  if(mostLighted === shortest) {
-    return [shortest];
-  }
-  return [mostLighted, shortest];
-}
+// const getOptimalRouteIndex = (densities, distances) => {
+//   let mostLighted = densities.indexOf(Math.max(...densities));
+//   let shortest = distances.indexOf(Math.min(...distances));
+//   if(mostLighted === shortest) {
+//     return [shortest];
+//   }
+//   return [mostLighted, shortest];
+// }
 
 // const getDensitiesDistances = (response, lightCounts) => {
 //   //get best route based on light density along route (light count / distance)
@@ -181,26 +342,26 @@ const getOptimalRouteIndex = (densities, distances) => {
 // }
 
 // const getOptimalRouteIndex = (densities, distances) => {
-  let mostLighted = densities.indexOf(Math.max(...densities));
-  let shortest = distances.indexOf(Math.min(...distances));
+  // let mostLighted = densities.indexOf(Math.max(...densities));
+  // let shortest = distances.indexOf(Math.min(...distances));
 //   if(mostLighted === shortest) {
 //     return [shortest];
 //   }
 //   return [mostLighted, shortest];
 // }
 
-const optimizeByLightDensity = response => {
-  let lightCounts = getLightCounts(response);
-
-  //lightDensities is an indexed dictionary containing densities and length of routes
-  let densitiesDistances = getDensitiesDistances(response, lightCounts);
-  console.log("densities distance:", densitiesDistances);
-
-  // optimizeRoute(...densitiesDistances);
-  return
-
-  let shortestRoute;
-}
+// const optimizeByLightDensity = response => {
+//   let lightCounts = getLightCounts(response);
+//
+//   //lightDensities is an indexed dictionary containing densities and length of routes
+//   let densitiesDistances = getDensitiesDistances(response, lightCounts);
+//   console.log("densities distance:", densitiesDistances);
+//
+//   // optimizeRoute(...densitiesDistances);
+//   return
+//
+//   let shortestRoute;
+// }
 
  // @constructor
 
@@ -241,7 +402,12 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
 AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, preference) {
  var radioButton = document.getElementById(id);
  var me = this;
- radioButton.addEventListener('click', function() {
+ // radioButton.addEventListener('click', function() {
+ //   //enables radio button to change the optimization preferences
+ //   me.preference = preference;
+ //   me.route();
+ // });
+ radioButton.addEventListener('change', function() {
    //enables radio button to change the optimization preferences
    me.preference = preference;
    me.route();
@@ -296,8 +462,8 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
       if(me.preference === "LIGHTING"){
-        $('#modal-percentage').text('194358940325890438');
-        $('#modal-lighting-optimized').modal('show');
+        // $('#modal-percentage').text('194358940325890438');
+
         // $('#').prop();
          if(response.routes.length > 1) {
            // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
@@ -314,19 +480,22 @@ AutocompleteDirectionsHandler.prototype.route = function() {
              densities.push(lightCounts[i]/distances[i]);
            }
 
-           let bestLit = densities.indexOf(Math.max(...densities));
+           bestRouteIndex = densities.indexOf(Math.max(...densities));
 
-           if(bestLit === 0) {
-             //if best list is also the shortest, display modal for when route is both optimized and shortest
-
+           if(bestRouteIndex === 0) {
+             //if best lit is also the shortest, display modal for when route is both optimized and shortest
+           } else {
+             //if best lit is not the shortest, display modal for user to select shortest route
+             $('#modal-lighting-optimized').modal('show');
            }
 
-           bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];
-           console.log("index", bestRouteIndex);
+           // bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];
+           // console.log("index", bestRouteIndex);
 
            // let shortestRoute;
-         // } else {
-         // //   //if only one route and user preference is lighting, unable to optimize
+         } else {
+           //if only one route and user preference is lighting, unable to optimize
+           $('modal-unoptimized').modal('show');
          }
       }
 

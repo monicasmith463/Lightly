@@ -92,7 +92,7 @@ class Register extends React.Component {
     							<div className="cols-sm-10">
     								<div className="input-group">
     									<span className="input-group-addon"><i className="glyphicon glyphicon-user" aria-hidden="true"></i></span>
-    									<input type="text" className="form-control" name="username" id="username" onChange={this.handleChange} placeholder="Enter your Username"/>
+    									<input type="text" className="form-control" name="username" id="username" onChange={this.handleChange} required className="form-control" placeholder="Enter your Username"/>
     								</div>
     							</div>
     						</div>
@@ -102,7 +102,7 @@ class Register extends React.Component {
     							<div className="cols-sm-10">
     								<div className="input-group">
     									<span className="input-group-addon"><i className="glyphicon glyphicon-envelope" aria-hidden="true"></i></span>
-    									<input type="text" className="form-control" name="email" id="email"  onChange={this.handleChange} placeholder="Enter your Email"/>
+    									<input type="text" className="form-control" name="email" id="email"  onChange={this.handleChange} required className="form-control" placeholder="Enter your Email"/>
     								</div>
     							</div>
     						</div>
@@ -112,7 +112,7 @@ class Register extends React.Component {
                   <div className="cols-sm-10">
                     <div className="input-group">
                       <span className="input-group-addon"><i className="glyphicon glyphicon-map-marker" aria-hidden="true"></i></span>
-                      <input type="text" className="form-control" name="zipcode" id="zipcode" onChange={this.handleChange} placeholder="Enter your Zipcode"/>
+                      <input type="text" className="form-control" name="zipcode" id="zipcode" onChange={this.handleChange} required className="form-control" placeholder="Enter your Zipcode"/>
                     </div>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ class Register extends React.Component {
     							<div className="cols-sm-10">
     								<div className="input-group">
     									<span className="input-group-addon"><i className="glyphicon glyphicon-lock" aria-hidden="true"></i></span>
-    									<input type="password" className="form-control" name="password" id="password" onChange={this.handleChange} placeholder="Enter your Password"/>
+    									<input type="password" className="form-control" name="password" id="password" onChange={this.handleChange} required className="form-control" placeholder="Enter your Password"/>
     								</div>
     							</div>
     						</div>
@@ -132,7 +132,7 @@ class Register extends React.Component {
                   <div className="cols-sm-10">
                     <div className="input-group">
                       <span className="input-group-addon"><i className="glyphicon glyphicon-lock" aria-hidden="true"></i></span>
-                      <input type="password" className="form-control" name="confirm" id="confirm"  onChange={this.handleChange} placeholder="Confirm your Password"/>
+                      <input type="password" className="form-control" name="confirm" id="confirm"  onChange={this.handleChange} required className="form-control" placeholder="Confirm your Password"/>
                     </div>
                   </div>
                 </div>

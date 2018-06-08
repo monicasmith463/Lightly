@@ -84,7 +84,7 @@ class Login extends React.Component {
     							<div className="cols-sm-10">
     								<div className="input-group">
     									<span className="input-group-addon"><i className="glyphicon glyphicon-user" aria-hidden="true"></i></span>
-    									<input type="text" className="form-control" name="username" id="username" onChange={this.handleChange} placeholder="Enter your Username"/>
+    									<input type="text" className="form-control" name="username" id="username" onChange={this.handleChange} required className="form-control" placeholder="Enter your Username"/>
     								</div>
     							</div>
     						</div>
@@ -94,7 +94,7 @@ class Login extends React.Component {
     							<div className="cols-sm-10">
     								<div className="input-group">
     									<span className="input-group-addon"><i className="glyphicon glyphicon-lock" aria-hidden="true"></i></span>
-    									<input type="password" className="form-control" name="password" id="password" onChange={this.handleChange} placeholder="Enter your Password"/>
+    									<input type="password" className="form-control" name="password" id="password" onChange={this.handleChange} required className="form-control" placeholder="Enter your Password"/>
     								</div>
     							</div>
     						</div>
