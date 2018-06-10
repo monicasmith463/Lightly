@@ -236,6 +236,7 @@ function initMap() {
 
     const autocompleteDirectionsHandler = new AutocompleteDirectionsHandler(map, directionsService, directionsDisplay);
 
+
   }, (xhrObj, textStatus, err) => {
     console.log("Request failed due to ", textStatus);
   })
@@ -340,6 +341,15 @@ AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, prefer
    //enables radio button to change the optimization preferences
    me.preference = preference;
    me.route();
+ });
+};
+
+AutocompleteDirectionsHandler.prototype.setupSaveRouteListener = function(id, route) {
+ var button = document.getElementById();
+ var me = this;
+ button.addEventListener('click', function() {
+   //enables button to save route.
+   me.currentRoute
  });
 };
 

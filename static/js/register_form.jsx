@@ -30,48 +30,6 @@ class Register extends React.Component {
     });
   }
 
-  validateSubmission = () => {
-    //look up username to see if in database already using AJAX
-    return (!this.state.username.length || !this.state.password.length);
-  }
-
-  // validatePassword = () => {
-  //     if(this.state.confirm.length && (this.state.confirm !== this.state.password)) {
-  //       return "Confirm password does not match"
-  //     } else {
-  //
-  //     }
-  //     // if (input.value != document.getElementById('password').value) {
-  //     //     input.setCustomValidity('Password Must be Matching.');
-  //     // } else {
-  //     //     // input is valid -- reset the error message
-  //     //     input.setCustomValidity('');
-  //     // }
-  // }
-  // handleSubmit = event => {
-  //   // let username = $('#username').val();
-  //   // let password = $('#password').val();
-  //   let username = this.state.username;
-  //   let password = this.state.password;
-  //   console.log('username, password', username, password);
-  //   if(validateSubmission()) {
-  //     $.ajax({
-  //         url: '/registerUser',
-  //         data: $('form').serialize(),
-  //         type: 'POST',
-  //         success: function(response) {
-  //             console.log(response);
-  //         },
-  //         error: function(error) {
-  //             console.log("data:", $('form').serialize());
-  //             console.log(error);
-  //         }
-  //     });
-  //   } else {
-  //     event.preventDefault();
-  //   }
-  // }
-
   render() {
     return (
       <div className="container">
