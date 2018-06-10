@@ -5,11 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-
   <title>Lightly</title>
 
   <style>
@@ -52,31 +50,25 @@
         {% endif %}
       </ul>
     </div>
+
     <!-- /.navbar-collapse -->
   </div>
   <!-- /.container-fluid -->
 </nav>
+
 <div id="extending">
   {% for flash in get_flashed_messages() %}
-    <div class="alert alert-danger" style="width:90%; margin:0 auto;">{{ flash }}</div>
+    <div class="alert alert-danger" style="width:50%; margin:0 auto;">{{ flash }}</div>
   {% endfor %}
 {% block content %}
 {% endblock %}
 </div>
-<!-- Jquery -->
+
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<!-- Bootstrap -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 {% block script %}
 {% endblock %}
-
-<!-- <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-<script src="http://unpkg.com/babel-standalone"></script>
-<script src="../static/js/test.jsx" type="text/jsx"></script> -->
-
 
 </body>
 </html>

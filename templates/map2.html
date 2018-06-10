@@ -4,14 +4,16 @@
      /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
      #map {
-       height: 600px;
+       height: 800px;
      }
      /* Optional: Makes the sample page fill the window. */
      html, body {
-       height: 50%;
+       height: 100%;
        margin: 0;
        padding: 0;
      }
+
+
      .controls {
        margin-top: 10px;
        border: 1px solid transparent;
@@ -76,6 +78,7 @@
 {% endblock %}
 
 {% block content %}
+
 <!-- Modal to choose to reroute, lighting optimized -->
 <div class="modal fade" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -153,21 +156,22 @@
   <input type="radio" name="type" id="changepreference-shortest">
   <label for="changepreference-shortest">Shortest</label>
 
-</div>
+
 
 <div id="map"></div>
 {% endblock %}
 
 {% block script %}
-
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <!-- custon markers with fontAwesome library -->
-    <script src="https://rawgit.com/nathan-muir/fontawesome-markers/master/fontawesome-markers.min.js"></script>
+    <!-- routeBoxer library -->
     <script type="text/javascript" src="https://rawgit.com/denissellu/routeboxer/master/src/RouteBoxer.js"></script>
+    <!-- Bootstrap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- custon markers with fontAwesome library -->
+    <!-- <script src="https://rawgit.com/nathan-muir/fontawesome-markers/master/fontawesome-markers.min.js"></script> -->
+    <!-- javscript -->
     <script type="text/javascript" src="../static/js/map.js"></script>
+    <!-- Google Maps API -->
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=places,geometry&callback=initMap"></script>
   </body>
 

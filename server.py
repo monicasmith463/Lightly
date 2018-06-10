@@ -22,7 +22,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    return render_template("homepage.html")
+    return render_template("map.html")
 
 @app.route('/register', methods=['GET'])
 def register_form():
@@ -41,11 +41,10 @@ def register_process():
     confirm = request.form["confirm"]
     email = request.form["email"]
     zipcode = request.form["zipcode"]
-    # return json.dumps({'status':'OK','username':username,'pass':password});
 
-    check_new_user = User.query.filter_by(username=username).first()
+    username_exists = User.query.filter_by(username=username).first()
 
-    if check_new_user:
+    if username_exists:
         flash("Username already exists.")
         return redirect("/register")
 
@@ -67,11 +66,11 @@ def register_process():
 
     return redirect("/")
 
-@app.route('/map')
-def map():
-    """Map."""
-
-    return render_template("map.html")
+# @app.route('/map')
+# def map():
+#     """Map."""
+#
+#     return render_template("map.html")
 
 
 @app.route('/login', methods=['GET'])
@@ -93,7 +92,7 @@ def process_login():
 
     if not user:
         flash("User does not exist.")
-        return redirect("/")
+        return redirect("/login")
 
 
     if user.password != password:
@@ -103,7 +102,7 @@ def process_login():
     session["user_id"] = user.user_id
 
     flash("Logged in")
-    return redirect("/map")
+    return redirect("/")
 
 
 @app.route('/logout')
@@ -119,7 +118,6 @@ def user_detail(user_id):
     """Show info about user."""
 
     user = User.query.filter_by(user_id=user_id).first()
-    # user = User.query.options(db.joinedload('ratings').joinedload('movie')).get(user_id)
     return render_template("user.html", user=user)
 
     # session["user_id"] = user.user_id

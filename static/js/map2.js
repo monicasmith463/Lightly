@@ -1,3 +1,4 @@
+
 var coordinates;
 var markers = [];
 
@@ -14,7 +15,6 @@ function initMap() {
                                )
   //set up map
   promise.then( response => {
-    console.log("coords", coordinates[0]);
     //set up directions Service and directions display
     const directionsService = new google.maps.DirectionsService;
     const directionsDisplay = new google.maps.DirectionsRenderer;
@@ -22,169 +22,8 @@ function initMap() {
     //create a new map object centered around Boise
     const map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
-      zoom: 16,
-      center:  {lat: 43.61295367682718, lng: -116.19129651919633 },
-      styles: [
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#242f3e"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#746855"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#242f3e"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.locality",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#263c3f"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#6b9a76"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#38414e"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#212a37"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9ca5b3"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#746855"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#1f2835"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#f3d19c"
-      }
-    ]
-  },
-  {
-    "featureType": "transit",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#2f3948"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#17263c"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#515c6d"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#17263c"
-      }
-    ]
-  }
-]
+      zoom: 13,
+      center:  {lat: 43.61295367682718, lng: -116.19129651919633 }
     });
 
     //set light markers on map
@@ -192,16 +31,6 @@ function initMap() {
       coords.forEach( coord => {
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
-          // icon: {
-          //   path: fontawesome.markers.FA_CIRCLE,
-          //   scale: 0.5,
-          //   strokeWeight: 0.2,
-          //   strokeColor: 'black',
-          //   strokeOpacity: 1,
-          //   fillColor: '#f8ae5f',
-          //   fillOpacity: 0.7,
-          // },
-          //   clickable: false,
           map: map
 
         });
@@ -227,9 +56,11 @@ function initMap() {
 
     google.maps.event.addListener(map, 'zoom_changed', function(event) {
       //markers are very dense to look at so only display when the view is zoomed
-      if(map.zoom === 16) {
+      console.log("zoom changed", map.zoom);
+      if(map.zoom > 17) {
+        console.log("zoom changed", map.zoom);
         showLights(markers);
-      } else if(map.zoom === 15) {
+      } else {
         hideLights(markers);
       }
     });
@@ -296,7 +127,6 @@ const searchAreas = boxedRoutes => {
   return lightCounts;
 };
 
-
  // @constructor
 
 function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay) {
@@ -357,6 +187,8 @@ AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(aut
    } else {
      me.destinationPlaceId = place.place_id;
    }
+   //clear old routes from map
+   // me.directionsDisplay.setMap(null);
    me.route();
  });
 
@@ -389,7 +221,9 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
       if(me.preference === "LIGHTING"){
-
+        $('#modal-percentage').text('194358940325890438');
+        $('#modal-lighting-optimized').modal('show');
+        // $('#').prop();
          if(response.routes.length > 1) {
            // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
            // if(bestRouteIndex === 0)
@@ -397,42 +231,16 @@ AutocompleteDirectionsHandler.prototype.route = function() {
            // lightDensities is an indexed dictionary containing densities and length of routes
            let distances = response.routes.map(route => route.legs[0].distance.value);
 
+           let durations = response.routes.map(route => route.legs[0].duration.value);
+
            let densities = [];
 
            for(let i=0; i < lightCounts.length; i++) {
              densities.push(lightCounts[i]/distances[i]);
            }
 
-           bestRouteIndex = densities.indexOf(Math.max(...densities));
-
-           if(bestRouteIndex === 0) {
-             //if best lit is also the shortest, display modal for when route is both optimized and shortest
-             $('#modal-all-optimized').modal('show');
-           } else {
-             //if best lit is not the shortest, calculate difference in duration between best-lit route and shortest route
-             //durations of routes in seconds:
-             let durations = response.routes.map(route => route.legs[0].duration.value);
-
-             //calculate duration delta. convert seconds to minutes, round to nearest minute
-             let durationDelta = Math.round((durations[bestRouteIndex] - durations[0])/60);
-
-             //percentage difference in light density between bestLit and shortest, rounded to nearest 10%
-             let densityDelta = 10 * Math.round(10 * ((densities[bestRouteIndex] - densities[0])/densities[0]));
-
-             //if time difference is under one minute or percentage light density difference is <10%, insignificant, so show modal for all optimized
-             if((durationDelta === 0) || (densityDelta === 0)) {
-               $('#modal-all-optimized').modal('show');
-             } else {
-               //if time difference is > 1min and percent difference is <=10%, display modal with difference in duration and lighting coverage percentage.
-               //give user the option to choose the shorter route.
-               $('#modal-percentage').text(densityDelta);
-               $('#modal-duration').text(durationDelta);
-               $('#modal-lighting-optimized').modal('show');
-             }
-          }
-         } else {
-           //if only one route and user preference is lighting, unable to optimize
-           $('#modal-unoptimized').modal('show');
+           bestRouteIndex = getOptimalRouteIndex(...densitiesDistances)[0];
+           console.log("index", bestRouteIndex);
          }
       }
 
