@@ -192,8 +192,11 @@ function initMap() {
       coords.forEach( coord => {
         let marker = new google.maps.Marker({
           position: { lat: coord[0], lng: coord[1] },
+          // icon: "https://vectr.com/monicasmith463/c2xu7tCaze.svg?width=640&height=640&select=c2xu7tCazepage0",
+          icon: "../static/css/images/marker.png",
+
           // icon: {
-          //   path: fontawesome.markers.FA_CIRCLE,
+          //   path: fontawesome.markers.CIRCLE,
           //   scale: 0.5,
           //   strokeWeight: 0.2,
           //   strokeColor: 'black',
@@ -431,7 +434,6 @@ AutocompleteDirectionsHandler.prototype.route = function() {
                //give user the option to choose the shorter route.
                $('#modal-percentage').text(densityDelta);
                $('#modal-duration').text(durationDelta);
-
                $('#modal-lighting-optimized').modal('show');
              }
           }

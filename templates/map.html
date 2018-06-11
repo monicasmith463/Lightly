@@ -27,7 +27,7 @@
         padding-left: 10px;
       }
 
-     #origin-input,
+     <!-- #origin-input,
      #destination-input {
        background-color: #fff;
        font-family: Roboto;
@@ -37,7 +37,7 @@
        padding: 0 11px 0 13px;
        text-overflow: ellipsis;
        width: 200px;
-     }
+     } -->
 
      #origin-input:focus,
      #destination-input:focus {
@@ -68,14 +68,14 @@
 
 {% block content %}
 <!-- Modal to choose to reroute, lighting optimized -->
-<div class="modal fade modal-lg" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal modal-lg fade" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-lighting-optimized-label">Route optimized!</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
+          <!-- <span aria-hidden="true">&times;</span>
+        </button> -->
       </div>
       <div class="modal-body">
         <canvas id="donut" width="20" height="20"></canvas>
@@ -131,11 +131,17 @@
 
 
 <!-- autocomplete directions -->
-<input id="origin-input" class="controls" type="text"
-    placeholder="Enter an origin location">
+<!-- <div class="form-group"> -->
+  <!-- <label class="col-form-label col-form-label-lg" for="inputLarge">Large input</label> -->
+<input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location">
+<input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location">
+<!-- </div> -->
 
-<input id="destination-input" class="controls" type="text"
-    placeholder="Enter a destination location">
+<!-- <input id="origin-input" class="controls" type="text"
+    placeholder="Enter an origin location"> -->
+
+<!-- <input id="destination-input" class="controls" type="text"
+    placeholder="Enter a destination location"> -->
 
 <!-- optimization preference -->
 

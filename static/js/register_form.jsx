@@ -37,7 +37,7 @@ class Register extends React.Component {
     				<div className="panel-heading">
     	               <div className="panel-title text-center">
     	               		<h1 className="title">Register</h1>
-    	               		<hr />
+    	               		// <hr />
     	               	</div>
     	            </div>
     				<div className="main-login main-center">
