@@ -227,9 +227,9 @@ function initMap() {
 
     google.maps.event.addListener(map, 'zoom_changed', function(event) {
       //markers are very dense to look at so only display when the view is zoomed
-      if(map.zoom === 16) {
+      if(map.zoom >= 16) {
         showLights(markers);
-      } else if(map.zoom === 15) {
+      } else {
         hideLights(markers);
       }
     });
@@ -322,7 +322,6 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
 
   this.setupClickListener('changepreference-lighting', 'LIGHTING');
   this.setupClickListener('changepreference-shortest', 'SHORTEST');
-  // this.setupClickListener('changemode-driving', 'DRIVING');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
   this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
@@ -330,6 +329,7 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
   this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(preferenceSelector);
+
 }
 
 // Sets a listener on a radio button to change the filter type on Places
@@ -341,15 +341,6 @@ AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, prefer
    //enables radio button to change the optimization preferences
    me.preference = preference;
    me.route();
- });
-};
-
-AutocompleteDirectionsHandler.prototype.setupSaveRouteListener = function(id, route) {
- var button = document.getElementById();
- var me = this;
- button.addEventListener('click', function() {
-   //enables button to save route.
-   me.currentRoute
  });
 };
 
@@ -399,7 +390,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
       if(me.preference === "LIGHTING"){
-
+        console.log('length', response.routes.length);
          if(response.routes.length > 1) {
            // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
            // if(bestRouteIndex === 0)
@@ -413,6 +404,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
              densities.push(lightCounts[i]/distances[i]);
            }
 
+           console.log()
            bestRouteIndex = densities.indexOf(Math.max(...densities));
 
            if(bestRouteIndex === 0) {
@@ -429,6 +421,8 @@ AutocompleteDirectionsHandler.prototype.route = function() {
              //percentage difference in light density between bestLit and shortest, rounded to nearest 10%
              let densityDelta = 10 * Math.round(10 * ((densities[bestRouteIndex] - densities[0])/densities[0]));
 
+             console.log(durationDelta, densityDelta);
+
              //if time difference is under one minute or percentage light density difference is <10%, insignificant, so show modal for all optimized
              if((durationDelta === 0) || (densityDelta === 0)) {
                $('#modal-all-optimized').modal('show');
@@ -437,6 +431,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
                //give user the option to choose the shorter route.
                $('#modal-percentage').text(densityDelta);
                $('#modal-duration').text(durationDelta);
+
                $('#modal-lighting-optimized').modal('show');
              }
           }

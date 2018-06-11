@@ -22,7 +22,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    return render_template("map.html")
+    return render_template("homepage.html")
 
 @app.route('/register', methods=['GET'])
 def register_form():
@@ -66,11 +66,11 @@ def register_process():
 
     return redirect("/")
 
-# @app.route('/map')
-# def map():
-#     """Map."""
-#
-#     return render_template("map.html")
+@app.route('/map')
+def map():
+    """Map."""
+
+    return render_template("map.html")
 
 
 @app.route('/login', methods=['GET'])
@@ -120,17 +120,12 @@ def user_detail(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     return render_template("user.html", user=user)
 
-    # session["user_id"] = user.user_id
-    #
-    # flash("Logged in")
-
 @app.route('/coordinate-data')
 def get_coordinates():
     """Route to get coordinates from database and jsonify."""
 
     coordinates = db.session.query(Light.latitude, Light.longitude).all()
     return jsonify(coordinates)
-
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
