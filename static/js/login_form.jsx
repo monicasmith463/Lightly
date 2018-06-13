@@ -24,54 +24,13 @@ class Login extends React.Component {
     });
   }
 
-  // handleSubmit = event => {
-  //   let username = $('#username').val();
-  //   let password = $('#password').val();
-  //   $.ajax({
-  //       url: '/login',
-  //       data: $('form').serialize(),
-  //       type: 'POST',
-  //       success: function(response) {
-  //           console.log(response);
-  //           window.location.href = "/";
-  //       },
-  //
-  //
-  //
-  //       error: function(error) {
-  //           console.log(error);
-  //       }
-  //   });
-  //   event.preventDefault();
-  // }
-
   render() {
     return (
-      // <form action="/login" method="POST">
-      //
-      //   <div className="form-group">
-      //     <label>Username:
-      //         <input id="username" type="username" name="username" onChange={this.handleChange} required className="form-control"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <label>Password:
-      //         <input id="password" type="password" name="password" onChange={this.handleChange} required className="form-control" maxLength="12"></input>
-      //     </label>
-      //   </div>
-      //
-      //   <div className="form-group">
-      //     <input type="submit" value="Log In" disabled={!this.validateForm()} className="btn"></input>
-      //   </div>
-      //
-      // </form>
       <div className="container">
     			<div className="row main">
     				<div className="panel-heading">
     	               <div className="panel-title text-center">
     	               		<h1 className="title">Login</h1>
-    	               		<hr />
     	               	</div>
     	            </div>
     				<div className="main-login main-center">

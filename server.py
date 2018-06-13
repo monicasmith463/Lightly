@@ -104,7 +104,6 @@ def process_login():
     flash("Logged in")
     return redirect("/")
 
-
 @app.route('/logout')
 def logout():
     """Log out."""

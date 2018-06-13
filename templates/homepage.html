@@ -1,8 +1,22 @@
 {% extends 'base.html' %}
+{% block style %}
+html, body {
+	height: 100%;
+}
+
+body{
+	background: url('http://unrestrictedstock.com/wp-content/uploads/2010/12/P1040871.jpg')no-repeat center center;
+	background-size: cover;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+{% endblock %}
+
+
 {% block content %}
-	<div id="homepage-block">
-    <h1 id="homepage-title">Lightly</h1>
-  </div>
+	<div id="homepage-block"></div>
 	<!-- <div id="root"> -->
 <!-- This element's contents will be replaced with ReactComponent1. -->
 <!-- </div> -->

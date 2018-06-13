@@ -5,12 +5,18 @@
       * element that contains the map. */
      #map {
        height: 800px;
+       width: 1000px;
+       position: float-right;
      }
      /* Optional: Makes the sample page fill the window. */
      html, body {
        height: 50%;
        margin: 0;
        padding: 0;
+     }
+
+     .control .panel {
+
      }
 
       #floating-panel {
@@ -27,34 +33,9 @@
         padding-left: 10px;
       }
 
-     <!-- #origin-input,
-     #destination-input {
-       background-color: #fff;
-       font-family: Roboto;
-       font-size: 15px;
-       font-weight: 300;
-       margin-left: 12px;
-       padding: 0 11px 0 13px;
-       text-overflow: ellipsis;
-       width: 200px;
-     } -->
-
      #origin-input:focus,
      #destination-input:focus {
        border-color: #4d90fe;
-     }
-
-     #mode-selector {
-       color: #fff;
-       background-color: #4d90fe;
-       margin-left: 12px;
-       padding: 5px 11px 0px 11px;
-     }
-
-     #mode-selector label {
-       font-family: Roboto;
-       font-size: 13px;
-       font-weight: 300;
      }
 
      #title {
@@ -64,106 +45,115 @@
        font-weight: 500;
        padding: 6px 12px;
      }
+
+     .modal-title{
+       text-align: center;
+     }
 {% endblock %}
 
 {% block content %}
-<!-- Modal to choose to reroute, lighting optimized -->
-<div class="modal modal-lg fade" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal-lighting-optimized-label">Route optimized!</h5>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
-          <!-- <span aria-hidden="true">&times;</span>
-        </button> -->
-      </div>
-      <div class="modal-body">
-        <canvas id="donut" width="20" height="20"></canvas>
-        Your route has <span id="modal-percentage"></span>% better lighting and takes <span id="modal-duration"></span> minutes longer than the shortest route.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="$('#changepreference-shortest').trigger('click');" data-dismiss="modal">Show me the shortest route</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Modal for optimized route also the shortest route-->
-<div class="modal fade" id="modal-all-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal-all-optimized-label">Route optimized!</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        You are on the shortest route with the best lighting.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+  <!-- Modal to choose to reroute, lighting optimized -->
+  <div class="modal modal-lg fade" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-lighting-optimized-label">Route optimized!</h5>
+          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
+            <!-- <span aria-hidden="true">&times;</span>
+          </button> -->
+        </div>
+        <div class="modal-body">
+          <canvas id="donut" width="20" height="20"></canvas>
+          Your route has <span id="modal-percentage"></span>% better lighting and takes <span id="modal-duration"></span> minutes longer than the shortest route.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#changepreference-shortest').trigger('click');" data-dismiss="modal">Show me the shortest route</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal for unable to optimize -->
-<div class="modal fade" id="modal-unoptimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal-unoptimized-label">Optimization unavailable.</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        You are on the shortest route.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+  <!-- Modal for optimized route also the shortest route-->
+  <div class="modal fade" id="modal-all-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-all-optimized-label">Route optimized!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          You are on the shortest route with the best lighting.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Modal for unable to optimize -->
+  <div class="modal fade" id="modal-unoptimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-unoptimized-label">Optimization unavailable.</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          You are on the shortest route.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
-<!-- autocomplete directions -->
-<!-- <div class="form-group"> -->
-  <!-- <label class="col-form-label col-form-label-lg" for="inputLarge">Large input</label> -->
-<input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location">
-<input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location">
-<!-- </div> -->
+  <!-- autocomplete directions -->
+  <div class="control-panel form-group">
+    <!-- <label class="col-form-label col-form-label-lg" for="inputLarge">Large input</label> -->
+    <input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location">
+    <input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location">
+  </div>
 
-<!-- <input id="origin-input" class="controls" type="text"
-    placeholder="Enter an origin location"> -->
+  <!-- <input id="origin-input" class="controls" type="text"
+      placeholder="Enter an origin location"> -->
 
-<!-- <input id="destination-input" class="controls" type="text"
-    placeholder="Enter a destination location"> -->
+  <!-- <input id="destination-input" class="controls" type="text"
+      placeholder="Enter a destination location"> -->
 
-<!-- optimization preference -->
+  <!-- optimization preference -->
 
-<div id="preference" class="controls custom-control custom-radio">
-  <input type="radio" id="changepreference-lighting" name="customRadio" class="custom-control-input" checked="checked">
-  <label for="changepreference-lighting" class="custom-control-label">Best Lighting</label>
+  <div id="preference" class="controls custom-control custom-radio">
+    <input type="radio" id="changepreference-lighting" name="customRadio" class="custom-control-input" checked="checked">
+    <label for="changepreference-lighting" class="custom-control-label">Best Lighting</label>
 
-<input type="radio" id="changepreference-shortest" name="customRadio" class="custom-control-input">
-<label for="changepreference-shortest" class="custom-control-label">Shortest</label>
-</div>
+  <input type="radio" id="changepreference-shortest" name="customRadio" class="custom-control-input">
+  <label for="changepreference-shortest" class="custom-control-label">Shortest</label>
+  </div>
 
+  <!-- <div class="save-route">
+    <button type="button" class="btn btn-primary" onclick="saveRoute();">Save this Route</button>
+  </div> -->
 
-<!-- <div id="preference" class="controls">
-  <input type="radio" name="type" id="changepreference-lighting" checked="checked">
-  <label for="changepreference-lighting">Best Lighting</label>
+  <!-- <div id="preference" class="controls">
+    <input type="radio" name="type" id="changepreference-lighting" checked="checked">
+    <label for="changepreference-lighting">Best Lighting</label>
 
-  <input type="radio" name="type" id="changepreference-shortest">
-  <label for="changepreference-shortest">Shortest</label>
+    <input type="radio" name="type" id="changepreference-shortest">
+    <label for="changepreference-shortest">Shortest</label>
 
-</div> -->
+  </div> -->
 
-<div id="map"></div>
+  <div id="map"></div>
+
 {% endblock %}
 
 {% block script %}
