@@ -4,9 +4,10 @@
      /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
      #map {
-       height: 800px;
+       height: 700px;
        width: 1000px;
-       position: float-right;
+       position: float-left;
+       margin: 30px;
      }
      /* Optional: Makes the sample page fill the window. */
      html, body {
@@ -14,11 +15,76 @@
        margin: 0;
        padding: 0;
      }
-
-     .control .panel {
-
+     .panel {
+       height: 700px;
+       width: 200px;
+       position: float-right;
      }
 
+     .panel-heading {
+
+     }
+     
+     .checkmark__circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #00bc8c;
+      fill: none;
+      animation: stroke 3.6s cubic-bezier(0.65, 0, 0.45, 1) infinite;
+    }
+
+.checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #303030;
+  stroke-miterlimit: 10;
+  margin: 10% auto;
+  box-shadow: inset 0px 0px 0px #7ac142;
+}
+
+#check {
+  display: none;
+}
+
+.checked > svg {
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  0%, 100% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: 360;
+  }
+}
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #00bc8c;
+  }
+}
+
+<!--
       #floating-panel {
         position: absolute;
         top: 10px;
@@ -31,11 +97,15 @@
         font-family: 'Roboto','sans-serif';
         line-height: 30px;
         padding-left: 10px;
-      }
+      } -->
 
      #origin-input:focus,
      #destination-input:focus {
        border-color: #4d90fe;
+     }
+
+     .control-panel {
+
      }
 
      #title {
@@ -48,6 +118,10 @@
 
      .modal-title{
        text-align: center;
+     }
+
+     label {
+       font-size: 18px;
      }
 {% endblock %}
 
@@ -115,12 +189,11 @@
     </div>
   </div>
 
-
   <!-- autocomplete directions -->
   <div class="control-panel form-group">
-    <!-- <label class="col-form-label col-form-label-lg" for="inputLarge">Large input</label> -->
-    <input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location">
-    <input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location">
+    <input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location" autocomplete="off" style="z-index: 0; width: 300px; position: absolute; left: 0px; margin:5px; top: 0px;">
+<input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location" autocomplete="off" style="z-index: 0; position: absolute; left: 320px; width:300px; margin: 5px; top: 0px;">
+    <!-- <input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location"> -->
   </div>
 
   <!-- <input id="origin-input" class="controls" type="text"
@@ -139,10 +212,6 @@
   <label for="changepreference-shortest" class="custom-control-label">Shortest</label>
   </div>
 
-  <!-- <div class="save-route">
-    <button type="button" class="btn btn-primary" onclick="saveRoute();">Save this Route</button>
-  </div> -->
-
   <!-- <div id="preference" class="controls">
     <input type="radio" name="type" id="changepreference-lighting" checked="checked">
     <label for="changepreference-lighting">Best Lighting</label>
@@ -151,8 +220,18 @@
     <label for="changepreference-shortest">Shortest</label>
 
   </div> -->
+  <div id="map" style="margin: 30px;"></div>
 
-  <div id="map"></div>
+
+<!-- side panel -->
+<div class="panel panel-default" style="position: absolute;top: 90px; right: 30px; width:350px;">
+  <h3 class="panel-heading"></h3>
+  <div id="check"><svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
+  <div class="panel-body"></div>
+</div>
+
+
+
 
 {% endblock %}
 

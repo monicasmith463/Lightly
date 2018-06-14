@@ -6,11 +6,6 @@ $(window).on('load', () => {
     // alert('page is loaded');
     $('#loading-content').hide();
     $('#page-content').show();
-
-    // setTimeout( () => {
-    //     alert('page is loaded and 1 minute has passed');
-    // }, 60000);
-
 })
 
 var coordinates;
@@ -301,12 +296,21 @@ const searchAreas = boxedRoutes => {
   return lightCounts;
 };
 
+const shortestRouteBestLighting = () => {
+  //trigger checkmark to stop loading and display
+  $('#check').addClass('checked');
 
- const saveRoute = (route) => {
-   if(route) {
-     $.post("/saveRoute", { data: { 'route': JSON.stringify(route.legs)}} );
-   }
- }
+  $('.panel-heading').text('Route optimized!');
+  $('.panel-body').text('You are on the shortest route with the best lighting');
+}
+
+const longerRouteBestLighting = (densityDelta, durationDelta) => {
+  //trigger checkmark to stop loading and display
+  $('#check').addClass('checked');
+
+  $('.panel-heading').text('Route optimized!');
+  $('.panel-body').text('Your route has ' + '% better lighting and takes ' + ' minutes longer than the shortest route.');
+}
 
  // @constructor
 
@@ -389,7 +393,7 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
  function (response, status) {
      if (status == google.maps.DirectionsStatus.OK) {
-
+       $('#check').show();
        //if a route is already displayed, clear it
        if(me.currentRoute) {
          me.currentRoute.setMap(null);
@@ -416,9 +420,12 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
            bestRouteIndex = densities.indexOf(Math.max(...densities));
 
+           //trigger checkmark to stop loading and display
+           $('#check').addClass('checked');
+
            if(bestRouteIndex === 0) {
              //if best lit is also the shortest, display modal for when route is both optimized and shortest
-             $('#modal-all-optimized').modal('show');
+             shortestRouteBestLighting();
            } else {
              //if best lit is not the shortest, calculate difference in duration between best-lit route and shortest route
              //durations of routes in seconds:
@@ -432,18 +439,17 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
              //if time difference is under one minute or percentage light density difference is <10%, insignificant, so show modal for all optimized
              if((durationDelta === 0) || (densityDelta === 0)) {
-               $('#modal-all-optimized').modal('show');
+               shortestRouteBestLighting();
              } else {
                //if time difference is > 1min and percent difference is <=10%, display modal with difference in duration and lighting coverage percentage.
                //give user the option to choose the shorter route.
-               $('#modal-percentage').text(densityDelta);
-               $('#modal-duration').text(durationDelta);
-               $('#modal-lighting-optimized').modal('show');
+               longerRouteBestLighting(densityDelta, durationDelta);
              }
           }
          } else {
            //if only one route and user preference is lighting, unable to optimize
            $('#modal-unoptimized').modal('show');
+           $('.panel-body').text('Optimization unavailable');
          }
       }
 
