@@ -1,7 +1,4 @@
-// import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 "use strict";
-
-
 
 class Login extends React.Component {
   constructor(props) {

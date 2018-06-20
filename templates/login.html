@@ -1,11 +1,5 @@
 {% extends 'base.html' %}
 {% block style %}
-body, html{
-     height: 100%;
- 	background-repeat: no-repeat;
- 	background-color: #d3d3d3;
- 	font-family: 'Oxygen', sans-serif;
-}
 
 .main{
  	margin-top: 70px;
@@ -54,19 +48,13 @@ input::-webkit-input-placeholder {
     text-align: center;
 }
 
-.title {
-    color: #464545;
-}
-
 {% endblock %}
 
 
 {% block content %}
 
 <div id="root"></div>
-<script type="text/jsx" src="../static/js/login_form.jsx">
-
-</script>
+<script type="text/jsx" src="../static/js/login_form.jsx"></script>
 {% endblock %}
 
 {% block script %}

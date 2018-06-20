@@ -9,7 +9,7 @@
        position: float-left;
        margin: 30px;
      }
-     /* Optional: Makes the sample page fill the window. */
+
      html, body {
        height: 50%;
        margin: 0;
@@ -21,10 +21,13 @@
        position: float-right;
      }
 
-     .panel-heading {
-
+     .panel-default>.panel-heading {
+         background-color: transparent;
+         border-color: transparent;
+         text-align: center;
      }
-     
+
+
      .checkmark__circle {
       stroke-dasharray: 166;
       stroke-dashoffset: 166;
@@ -47,9 +50,7 @@
   box-shadow: inset 0px 0px 0px #7ac142;
 }
 
-#check {
-  display: none;
-}
+
 
 .checked > svg {
   animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
@@ -84,28 +85,10 @@
   }
 }
 
-<!--
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        right: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      } -->
-
      #origin-input:focus,
      #destination-input:focus {
        border-color: #4d90fe;
-     }
-
-     .control-panel {
-
+       text-align: center;
      }
 
      #title {
@@ -123,129 +106,114 @@
      label {
        font-size: 18px;
      }
+
+     .panel-body {
+      font-size: 18px;
+      text-align: center;
+
+     }
 {% endblock %}
 
 {% block content %}
 
-  <!-- Modal to choose to reroute, lighting optimized -->
-  <div class="modal modal-lg fade" id="modal-lighting-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modal-lighting-optimized-label">Route optimized!</h5>
-          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
-            <!-- <span aria-hidden="true">&times;</span>
-          </button> -->
-        </div>
-        <div class="modal-body">
-          <canvas id="donut" width="20" height="20"></canvas>
-          Your route has <span id="modal-percentage"></span>% better lighting and takes <span id="modal-duration"></span> minutes longer than the shortest route.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#changepreference-shortest').trigger('click');" data-dismiss="modal">Show me the shortest route</button>
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal for optimized route also the shortest route-->
-  <div class="modal fade" id="modal-all-optimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modal-all-optimized-label">Route optimized!</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          You are on the shortest route with the best lighting.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal for unable to optimize -->
-  <div class="modal fade" id="modal-unoptimized" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modal-unoptimized-label">Optimization unavailable.</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          You are on the shortest route.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- autocomplete directions -->
-  <div class="control-panel form-group">
-    <input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location" autocomplete="off" style="z-index: 0; width: 300px; position: absolute; left: 0px; margin:5px; top: 0px;">
-<input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location" autocomplete="off" style="z-index: 0; position: absolute; left: 320px; width:300px; margin: 5px; top: 0px;">
-    <!-- <input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location"> -->
+  <div class="control-panel form-group" style="text-align:center;position: absolute; top-margin: 10px;z-index: 999;left: 222px;">
+    <input id="origin-input" class="controls form-control form-control-lg" type="text" placeholder="Enter an origin location" autocomplete="off" style="z-index: 0; width: 300px; text-align:center; position: absolute; left: 0px; margin:5px; top: 0px;">
+    <input id="destination-input" class="controls form-control form-control-lg" type="text" placeholder="Enter a destination location" autocomplete="off" style="z-index: 0; position: absolute; text-align:center; left: 320px; width:300px; margin: 5px; top: 0px;">
   </div>
 
-  <!-- <input id="origin-input" class="controls" type="text"
-      placeholder="Enter an origin location"> -->
+<!-- side panel background-->
+<div id="back-panel" class="panel panel-default" style="position: absolute;top: 90px; right: 30px; width:350px;">
+</div>
 
-  <!-- <input id="destination-input" class="controls" type="text"
-      placeholder="Enter a destination location"> -->
+<!-- Welcome panel -->
+<div id="welcome-panel" class="panel panel-default" style="background-color: transparent; position: absolute;top: 90px; right: 30px; width:350px;">
+    <h2 style="margin-top:200px" class="panel-heading">Welcome to Lightly!</h2>
+    <div class="panel-body">
+      <span><div>Enter your origin and destination to follow the brightest path.</div></span>
+      <div><i style="font-size: 80px; text-align: center; margin:30px" class="fas fa-lightbulb"></i></div>
+    </div>
+</div>
 
-  <!-- optimization preference -->
-
-  <div id="preference" class="controls custom-control custom-radio">
-    <input type="radio" id="changepreference-lighting" name="customRadio" class="custom-control-input" checked="checked">
-    <label for="changepreference-lighting" class="custom-control-label">Best Lighting</label>
-
-  <input type="radio" id="changepreference-shortest" name="customRadio" class="custom-control-input">
-  <label for="changepreference-shortest" class="custom-control-label">Shortest</label>
+<!-- panel to switch to shorter route -->
+<div id="longer-route-panel" class="panel panel-default" hidden="hidden" style="background-color: transparent; position: absolute;top: 90px; right: 30px; width:350px;">
+    <h3 class="panel-heading">Route optimized!</h3>
+    <div class="panel-body">
+      <!-- checkmark source https://codepen.io/anon/pen/ERXqrW -->
+      <div id="checkmark1"><svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
+      <div style="margin: 40px; font-size: 25px">
+        <div><i class="fas fa-walking"></i>
+          <div class="distance-text"></div>
+        </div>
+        <div style="margin:30px"><i class="fas fa-lightbulb"></i>
+          <div class="percentage-text">+<span id="percentage-text"></span>%</div>
+        </div>
+        <div><i class="fas fa-clock"></i>
+          <div class="duration-text"></div>
+          <div class="text-muted duration-delta">+<span id="duration-delta"></span> min</div>
+        </div>
+      </div>
+      <button name="change" type="button" hidden="hidden" class="btn btn-info" style="float:center;" id="changepreference-shortest">
+          Show me the shortest route
+      </button>
+    </div>
   </div>
+</div>
 
-  <!-- <div id="preference" class="controls">
-    <input type="radio" name="type" id="changepreference-lighting" checked="checked">
-    <label for="changepreference-lighting">Best Lighting</label>
+<!-- all optimized panel -->
+<div id="all-optimized-route-panel" class="panel panel-default" hidden="hidden" style="background-color: transparent; position: absolute;top: 90px; right: 30px; width:350px;">
+    <h3 class="panel-heading">Route optimized!</h3>
+    <div id="checkmark2"><svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
+    <div class="panel-body">
+      <div>You are on the shortest route with the best lighting.</div>
+      <div style="margin: 40px; font-size: 25px">
+        <div><i class="fas fa-walking"></i> <span class="distance-text"></span></div>
+        <div><i class="fas fa-clock"></i> <span class="duration-text"></span></div>
+      </div>
+    </div>
+</div>
 
-    <input type="radio" name="type" id="changepreference-shortest">
-    <label for="changepreference-shortest">Shortest</label>
+<!-- switch to shortest route back-panel -->
+<!-- unoptimized panel -->
+<div id="shortest-route-panel" class="panel panel-default" hidden="hidden" style="background-color: transparent; position: absolute;top: 90px; right: 30px; width:350px;">
+      <div style="margin-top: 200px">
+      <h2 style="text-align:center; padding:20px">You are on the shortest route.</h2>
+      <div style="text-align: center; margin: 40px; font-size: 25px">
+        <div><i class="fas fa-walking"></i> <span class="distance-text"></span></div>
+        <div><i class="fas fa-clock"></i> <span class="duration-text"></span></div>
+      </div>
+    </div>
+</div>
 
-  </div> -->
-  <div id="map" style="margin: 30px;"></div>
-
-
-<!-- side panel -->
-<div class="panel panel-default" style="position: absolute;top: 90px; right: 30px; width:350px;">
-  <h3 class="panel-heading"></h3>
-  <div id="check"><svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
-  <div class="panel-body"></div>
+<!-- unoptimized panel -->
+<div id="unable-to-optimize-route-panel" class="panel panel-default" hidden="hidden" style="background-color: transparent; position: absolute;top: 90px; right: 30px; width:350px;">
+    <h3 class="panel-heading">Optimization unavailable.</h3>
+    <div class="panel-body">
+      <div>You are on the shortest route.</div>
+      <div style="margin: 40px; font-size: 25px">
+        <div><i class="fas fa-walking"></i> <span class="distance-text"></span></div>
+        <div><i class="fas fa-clock"></i> <span class="duration-text"></span></div>
+      </div>
+    </div>
 </div>
 
 
 
-
+<div id="map"></div>
 {% endblock %}
 
 {% block script %}
 
+
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <!-- custon markers with fontAwesome library -->
-    <script src="https://rawgit.com/nathan-muir/fontawesome-markers/master/fontawesome-markers.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/denissellu/routeboxer/master/src/RouteBoxer.js"></script>
+    <!-- icons -->
+    <script src="https://unpkg.com/ionicons@4.2.0/dist/ionicons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../static/js/map.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrT0tS9oNHlUiotOmO4mZj3PhFbUc8l30&libraries=places,geometry&callback=initMap"></script>
+    <script type="text/javascript" src={{ "https://maps.googleapis.com/maps/api/js?key=" + GMAPS_API_KEY + "&libraries=places,geometry&callback=initMap" }}></script>
   </body>
 
 {% endblock %}

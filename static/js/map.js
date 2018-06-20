@@ -8,6 +8,10 @@ $(window).on('load', () => {
     $('#page-content').show();
 })
 
+//initially hide
+// $('#changepreference-shortest').hide();
+// $('#changepreference-shortest').hide();
+
 var coordinates;
 var markers = [];
 
@@ -28,7 +32,7 @@ function initMap() {
     const map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
       zoom: 16,
-      center:  {lat: 43.61295367682718, lng: -116.19129651919633 },
+      center:  {lat: 43.613401, lng: -116.200255 },
       styles: [
                 {
                   "elementType": "geometry",
@@ -260,8 +264,8 @@ const boxRoutes = (response, routeBoxer, map) => {
       let newBox = new google.maps.Rectangle({
         bounds: box,
         fillOpacity: 0,
-        strokeOpacity: 0.0,
-        strokeColor: '#000001',
+        strokeOpacity: 0,
+        strokeColor: '#0000001',
         strokeWeight: 1,
         map: map
 
@@ -296,20 +300,46 @@ const searchAreas = boxedRoutes => {
   return lightCounts;
 };
 
-const shortestRouteBestLighting = () => {
-  //trigger checkmark to stop loading and display
-  $('#check').addClass('checked');
-
-  $('.panel-heading').text('Route optimized!');
-  $('.panel-body').text('You are on the shortest route with the best lighting');
+const hideAll = () => {
+  $("#unable-to-optimize-route-panel").hide();
+  $("#all-optimized-route-panel").hide();
+  $('#shortest-route-panel').hide();
+  $("#longer-route-panel").hide();
 }
 
-const longerRouteBestLighting = (densityDelta, durationDelta) => {
+const shortestRouteBestLighting = (distanceText, durationText) => {
   //trigger checkmark to stop loading and display
-  $('#check').addClass('checked');
+  hideAll();
+  $('.distance-text').text(distanceText);
+  $('.duration-text').text(durationText);
+  $('#checkmark2').addClass('checked');
+  $("#all-optimized-route-panel").show();
+}
 
-  $('.panel-heading').text('Route optimized!');
-  $('.panel-body').text('Your route has ' + '% better lighting and takes ' + ' minutes longer than the shortest route.');
+const longerRouteBestLighting = (densityDelta, durationDelta, distanceText, durationText) => {
+  //trigger checkmark to stop loading and display
+  hideAll();
+  $('.distance-text').text(distanceText);
+  $('.duration-text').text(durationText);
+  $('#duration-delta').text(durationDelta);
+  $('#percentage-text').text(densityDelta);
+  $('#checkmark1').addClass('checked');
+  $("#longer-route-panel").show();
+}
+
+const optimizationUnavailable = (distanceText, durationText) => {
+  hideAll();
+  $('.distance-text').text(distanceText);
+  $('.duration-text').text(durationText);
+  $('#unable-to-optimize-route-panel').show();
+}
+
+const shortestRoute = (distanceText, durationText) => {
+  hideAll();
+  $('.distance-text').text(distanceText);
+  $('.duration-text').text(durationText);
+  $('#shortest-route-panel').show();
+
 }
 
  // @constructor
@@ -334,7 +364,7 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   var destinationAutocomplete = new google.maps.places.Autocomplete(
      destinationInput, {placeIdOnly: true});
 
-  this.setupClickListener('changepreference-lighting', 'LIGHTING');
+  // this.setupClickListener('changepreference-lighting', 'LIGHTING');
   this.setupClickListener('changepreference-shortest', 'SHORTEST');
 
   this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
@@ -349,11 +379,11 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
 // Sets a listener on a radio button to change the filter type on Places
 // Autocomplete.
 AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, preference) {
- var radioButton = document.getElementById(id);
+ var button = document.getElementById(id);
  var me = this;
- radioButton.addEventListener('click', function() {
+ button.addEventListener('click', function() {
    //enables radio button to change the optimization preferences
-   me.preference = preference;
+   me.preference = "SHORTEST";
    me.route();
  });
 };
@@ -393,75 +423,77 @@ AutocompleteDirectionsHandler.prototype.route = function() {
 
  function (response, status) {
      if (status == google.maps.DirectionsStatus.OK) {
-       $('#check').show();
        //if a route is already displayed, clear it
        if(me.currentRoute) {
          me.currentRoute.setMap(null);
+       } else {
+         $('#welcome-panel').hide();
        }
 
+       let optimalIndex = 0;
+
         //if only one route is returned default to route index 0
-       let bestRouteIndex = 0;
+       let distancesText = response.routes.map(route => route.legs[0].distance.text);
+       let durationsText = response.routes.map(route => route.legs[0].duration.text);
+
        //else, perform route optimization based on light positions
       //if more than one route is possible, optimize:
-      if(me.preference === "LIGHTING"){
-        console.log('length', response.routes.length);
-         if(response.routes.length > 1) {
-           // bestRouteIndex = optimizeByLightDensity(response, me.routeBoxer);
-           // if(bestRouteIndex === 0)
-           let lightCounts = getLightCounts(response, me.routeBoxer, me.map);
-           // lightDensities is an indexed dictionary containing densities and length of routes
-           let distances = response.routes.map(route => route.legs[0].distance.value);
+        if(me.preference === "LIGHTING"){
+           if(response.routes.length > 1) {
+             //trigger checkmark to stop loading and display
+             $('#checkmark1').removeClass('checked');
+             $('#checkmark2').removeClass('checked');
 
-           let densities = [];
+             let lightCounts = getLightCounts(response, me.routeBoxer, me.map);
+             // lightDensities is an indexed dictionary containing densities and length of routes
+             let distances = response.routes.map(route => route.legs[0].distance.value);
 
-           for(let i=0; i < lightCounts.length; i++) {
-             densities.push(lightCounts[i]/distances[i]);
-           }
+             let densities = [];
 
-           bestRouteIndex = densities.indexOf(Math.max(...densities));
-
-           //trigger checkmark to stop loading and display
-           $('#check').addClass('checked');
-
-           if(bestRouteIndex === 0) {
-             //if best lit is also the shortest, display modal for when route is both optimized and shortest
-             shortestRouteBestLighting();
-           } else {
-             //if best lit is not the shortest, calculate difference in duration between best-lit route and shortest route
-             //durations of routes in seconds:
-             let durations = response.routes.map(route => route.legs[0].duration.value);
-
-             //calculate duration delta. convert seconds to minutes, round to nearest minute
-             let durationDelta = Math.round((durations[bestRouteIndex] - durations[0])/60);
-
-             //percentage difference in light density between bestLit and shortest, rounded to nearest 10%
-             let densityDelta = 10 * Math.round(10 * ((densities[bestRouteIndex] - densities[0])/densities[0]));
-
-             //if time difference is under one minute or percentage light density difference is <10%, insignificant, so show modal for all optimized
-             if((durationDelta === 0) || (densityDelta === 0)) {
-               shortestRouteBestLighting();
-             } else {
-               //if time difference is > 1min and percent difference is <=10%, display modal with difference in duration and lighting coverage percentage.
-               //give user the option to choose the shorter route.
-               longerRouteBestLighting(densityDelta, durationDelta);
+             for(let i=0; i < lightCounts.length; i++) {
+               densities.push(lightCounts[i]/distances[i]);
              }
+
+             let optimalIndex = densities.indexOf(Math.max(...densities));
+
+             if(optimalIndex === 0) {
+               //if best lit is also the shortest, display panel for when route is both optimized and shortest
+               shortestRouteBestLighting(distancesText[0], durationsText[0]);
+             } else {
+               //if best lit is not the shortest, calculate difference in duration between best-lit route and shortest route
+               //durations of routes in seconds:
+               let durations = response.routes.map(route => route.legs[0].duration.value);
+
+               //calculate duration delta. convert seconds to minutes, round to nearest minute
+               let durationDelta = Math.round((durations[optimalIndex] - durations[0])/60);
+
+               //percentage difference in light density between bestLit and shortest, rounded to nearest 10%
+               let densityDelta = 10 * Math.round(10 * ((densities[optimalIndex] - densities[0])/densities[0]));
+
+               //if time difference is under one minute or percentage light density difference is <10%, insignificant, so show modal for all optimized
+               if((durationDelta === 0) || (densityDelta === 0)) {
+                 shortestRouteBestLighting(distancesText[0], durationsText[0]);
+               } else {
+                 //if time difference is > 1min and percent difference is <=10%, display modal with difference in duration and lighting coverage percentage.
+                 //give user the option to choose the shorter route.
+                 longerRouteBestLighting(densityDelta, durationDelta, distancesText[optimalIndex], durationsText[optimalIndex]);
+               }
+            }
+          } else {
+            optimizationUnavailable(distancesText[0], durationsText[0]);
           }
-         } else {
-           //if only one route and user preference is lighting, unable to optimize
-           $('#modal-unoptimized').modal('show');
-           $('.panel-body').text('Optimization unavailable');
-         }
-      }
+        } else {
+          shortestRoute(distancesText[0], durationsText[0]);
+        }
 
     //if preference is shortest, just default to index 0
        me.currentRoute = new google.maps.DirectionsRenderer({
          map: me.map,
          directions: response,
-         routeIndex: bestRouteIndex,
+         routeIndex: optimalIndex || 0,
          polylineOptions: { strokeColor: '#3498db' }
        });
-
-      saveRoute(me.currentRoute);
+    me.preference = "LIGHTING";
 
      } else {
        window.alert('Directions request failed due to ' + status);
