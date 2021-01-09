@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy_utils import PasswordType, force_auto_coercion
+
 force_auto_coercion()
 
 # Connect to the PostgreSQL database through the Flask-SQLAlchemy helper library.
@@ -81,4 +82,4 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
-    print "Connected to DB."
+    print("Connected to DB.")

@@ -126,12 +126,13 @@ def get_coordinates():
     """Route to get coordinates from database and jsonify."""
 
     coordinates = db.session.query(Light.latitude, Light.longitude).all()
+    print("coordinates", coordinates)
     return jsonify(coordinates)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = False
+    app.debug = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.jinja_env.auto_reload = app.debug
     connect_to_db(app)

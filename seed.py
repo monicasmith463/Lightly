@@ -6,7 +6,7 @@ from sqlalchemy import func
 from faker import Faker
 fake = Faker()
 import json
-
+import passlib
 from model import Light, User, connect_to_db, db
 from server import app
 
@@ -35,15 +35,13 @@ def load_light_data(filename):
 
         light = Light(location=location, latitude=latitude, longitude=longitude, status=status,
                       lamp_type=lamp_type, wattage=wattage)
-        print light
         # Add each light object to the session
         db.session.add(light)
 
         # Mark each periodic commit
         if i % 1000 == 0:
-            print "Commit to database: ", i
 
-            #Commit every 1000 entries to prevent program from choking
+            #Commit every 1000 entries to prevent bottleneck
 
             db.session.commit()
 
@@ -65,7 +63,6 @@ def load_user_data(num_fake_users=20):
         email = fake.email()
         zipcode = ''.join(map(lambda x: random.choice(nums), range(5)))
         password = ''.join(map(lambda x: random.choice(chars), range(random.randint(6, 10))))
-        print "password: ", password
 
         user = User(username=username, password=password, email=email, zipcode=zipcode)
         db.session.add(user)

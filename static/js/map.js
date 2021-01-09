@@ -360,9 +360,9 @@ function AutocompleteDirectionsHandler(map, directionsService, directionsDisplay
   this.directionsDisplay.setMap(map);
 
   var originAutocomplete = new google.maps.places.Autocomplete(
-     originInput, {placeIdOnly: true});
+     originInput, {fields: ['place_id', 'name', 'types']});
   var destinationAutocomplete = new google.maps.places.Autocomplete(
-     destinationInput, {placeIdOnly: true});
+     destinationInput, {fields: ['place_id', 'name', 'types']});
 
   // this.setupClickListener('changepreference-lighting', 'LIGHTING');
   this.setupClickListener('changepreference-shortest', 'SHORTEST');

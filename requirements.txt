@@ -1,6 +1,7 @@
-Flask==0.12
+cFlask==1.1.2
 Flask-DebugToolbar==0.10.1
-Flask-SQLAlchemy==2.2
+Flask-SQLAlchemy==2.4.4
 psycopg2==2.7.1
 SQLAlchemy==1.1.7
 GeoAlchemy==0.4.1
+faker==5.0.2
